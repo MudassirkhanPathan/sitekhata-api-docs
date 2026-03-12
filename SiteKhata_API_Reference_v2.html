@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiteKhata — Complete API Reference v2</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #060810;
+  --s1:       #0A0D1A;
+  --s2:       #0F1320;
+  --s3:       #141828;
+  --border:   #1C2235;
+  --border2:  #252D45;
+  --text:     #E4EAF8;
+  --muted:    #4A5578;
+  --muted2:   #6B7A9F;
+
+  --GET:    #10B981; --GET-bg:    rgba(16,185,129,0.08);  --GET-b:  rgba(16,185,129,0.2);
+  --POST:   #3B82F6; --POST-bg:   rgba(59,130,246,0.08);  --POST-b: rgba(59,130,246,0.2);
+  --PUT:    #F59E0B; --PUT-bg:    rgba(245,158,11,0.08);  --PUT-b:  rgba(245,158,11,0.2);
+  --PATCH:  #A855F7; --PATCH-bg:  rgba(168,85,247,0.08);  --PATCH-b:rgba(168,85,247,0.2);
+  --DELETE: #EF4444; --DELETE-bg: rgba(239,68,68,0.08);   --DELETE-b:rgba(239,68,68,0.2);
+  --PROMPT: #06B6D4; --PROMPT-bg: rgba(6,182,212,0.06);   --PROMPT-b:rgba(6,182,212,0.2);
+  --SCALE:  #F59E0B; --SCALE-bg:  rgba(245,158,11,0.06);  --SCALE-b: rgba(245,158,11,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--s1);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(6,8,16,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  display:flex;align-items:center;gap:16px;height:58px;
+}
+.logo{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#3B82F6;letter-spacing:-0.5px;}
+.logo span{color:var(--muted2);}
+.topbar-divider{width:1px;height:22px;background:var(--border);margin:0 4px;}
+.base-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted2);background:var(--s2);border:1px solid var(--border);padding:4px 10px;border-radius:4px;}
+.api-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--GET);background:var(--GET-bg);border:1px solid var(--GET-b);padding:4px 12px;border-radius:4px;}
+.scale-badge{font-family:'JetBrains Mono',monospace;font-size:11px;color:#FCD34D;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);padding:4px 12px;border-radius:4px;}
+.search-box{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s2);border:1px solid var(--border);border-radius:6px;
+  padding:5px 12px;
+}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;width:180px;}
+.search-box input::placeholder{color:var(--muted);}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:calc(100vh - 58px);}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:230px;flex-shrink:0;
+  background:var(--s1);border-right:1px solid var(--border);
+  overflow-y:auto;padding:12px 0 20px;
+}
+.sb-section{margin-bottom:2px;}
+.sb-label{padding:14px 16px 5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;}
+.sb-btn{
+  display:flex;align-items:center;gap:9px;width:100%;
+  padding:8px 16px;background:none;border:none;border-left:2px solid transparent;
+  color:var(--muted2);font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:500;
+  cursor:pointer;text-align:left;transition:all .15s;
+}
+.sb-btn:hover{background:var(--s2);color:var(--text);}
+.sb-btn.active{background:rgba(59,130,246,0.07);color:#3B82F6;border-left-color:#3B82F6;}
+.sb-icon{font-size:14px;width:18px;text-align:center;}
+.sb-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;padding:1px 6px;background:var(--s3);color:var(--muted2);border-radius:8px;}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:28px 32px 60px;}
+
+/* ── MODULE CARD ── */
+.module-block{margin-bottom:52px;scroll-margin-top:70px;}
+.module-head{
+  display:flex;align-items:center;gap:14px;
+  padding-bottom:16px;margin-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.module-icon-wrap{
+  width:46px;height:46px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.module-title{font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;}
+.module-path{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted2);margin-top:3px;}
+.module-badge{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;
+  padding:4px 12px;border-radius:4px;font-weight:600;
+}
+.module-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:18px;padding:12px 16px;background:var(--s2);border-radius:8px;border-left:3px solid var(--border2);}
+
+/* CONNECTION MAP */
+.conn-map{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;align-items:center;}
+.conn-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1.5px;margin-right:4px;}
+.conn-chip{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 9px;border-radius:3px;background:var(--s3);border:1px solid var(--border2);color:var(--muted2);}
+.conn-chip.primary{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:#3B82F6;}
+
+/* ── API ROW ── */
+.api-row{
+  background:var(--s2);border:1px solid var(--border);border-radius:8px;
+  margin-bottom:6px;overflow:hidden;transition:border-color .15s;
+}
+.api-row:hover{border-color:var(--border2);}
+.api-row.open{border-color:var(--border2);}
+
+.api-top{
+  display:grid;grid-template-columns:80px 1fr auto;
+  align-items:center;gap:14px;padding:13px 18px;cursor:pointer;
+}
+.method{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  padding:4px 0;border-radius:5px;text-align:center;
+}
+.m-GET   {background:var(--GET-bg);  color:var(--GET);   border:1px solid var(--GET-b);}
+.m-POST  {background:var(--POST-bg); color:var(--POST);  border:1px solid var(--POST-b);}
+.m-PUT   {background:var(--PUT-bg);  color:var(--PUT);   border:1px solid var(--PUT-b);}
+.m-PATCH {background:var(--PATCH-bg);color:var(--PATCH); border:1px solid var(--PATCH-b);}
+.m-DELETE{background:var(--DELETE-bg);color:var(--DELETE);border:1px solid var(--DELETE-b);}
+
+.api-path-text{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text);}
+.api-path-text .seg-base{color:var(--muted);}
+.api-path-text .seg-param{color:#FB923C;}
+.api-path-text .seg-query{color:#A78BFA;}
+
+.api-chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.chip{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;white-space:nowrap;}
+.chip-jwt{background:rgba(239,68,68,0.1);color:#F87171;border:1px solid rgba(239,68,68,0.2);}
+.chip-pub{background:rgba(16,185,129,0.1);color:#34D399;border:1px solid rgba(16,185,129,0.2);}
+.chip-role{background:rgba(168,85,247,0.1);color:#C084FC;border:1px solid rgba(168,85,247,0.2);}
+.chevron{color:var(--muted);font-size:11px;transition:transform .2s;flex-shrink:0;}
+.api-row.open .chevron{transform:rotate(180deg);}
+
+/* ── DETAIL PANEL ── */
+.api-detail{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+.api-row.open .api-detail{display:block;}
+
+.detail-desc{
+  margin-top:14px;font-size:13px;color:#94A3B8;line-height:1.7;
+  padding:10px 14px;background:var(--s1);border-radius:6px;border-left:3px solid #3B82F6;
+}
+
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.detail-grid.single{grid-template-columns:1fr;}
+@media(max-width:680px){.detail-grid{grid-template-columns:1fr;}}
+
+.dbox{background:var(--s1);border:1px solid var(--border);border-radius:7px;padding:14px;overflow:hidden;}
+.dbox.full{grid-column:1/-1;}
+.dlabel{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;}
+
+/* table */
+.param-table{width:100%;border-collapse:collapse;}
+.param-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:0 8px 8px;text-align:left;border-bottom:1px solid var(--border);}
+.param-table td{font-size:12px;padding:7px 8px;border-bottom:1px solid rgba(28,34,53,0.6);vertical-align:top;}
+.param-table tr:last-child td{border-bottom:none;}
+.pname{font-family:'JetBrains Mono',monospace;color:#67E8F9;font-size:11.5px;}
+.ptype{font-family:'JetBrains Mono',monospace;color:#C084FC;font-size:10px;}
+.preq{font-family:'JetBrains Mono',monospace;font-size:9px;}
+.preq.r{color:#F87171;} .preq.o{color:var(--muted);}
+.pdesc{color:var(--muted2);font-size:11.5px;}
+
+/* code */
+.codeblock{
+  background:#080B14;border:1px solid #161D30;border-radius:6px;
+  padding:12px 15px;font-family:'JetBrains Mono',monospace;font-size:11px;
+  line-height:1.95;color:#CDD9F5;overflow-x:auto;white-space:pre;margin-top:0;
+}
+.ck {color:#FF79C6;} .cs{color:#F1FA8C;} .cc{color:#44475A;font-style:italic;}
+.ck2{color:#8BE9FD;} .cv{color:#50FA7B;} .cn{color:#BD93F9;}
+
+/* status codes */
+.status-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:0;}
+.sc{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 10px;border-radius:4px;}
+.s200{background:rgba(16,185,129,0.1);color:#34D399;border:1px solid rgba(16,185,129,0.2);}
+.s201{background:rgba(59,130,246,0.1);color:#60A5FA;border:1px solid rgba(59,130,246,0.2);}
+.s400{background:rgba(245,158,11,0.1);color:#FCD34D;border:1px solid rgba(245,158,11,0.2);}
+.s401{background:rgba(239,68,68,0.1);color:#F87171;border:1px solid rgba(239,68,68,0.2);}
+.s403{background:rgba(249,115,22,0.1);color:#FB923C;border:1px solid rgba(249,115,22,0.2);}
+.s404{background:rgba(107,114,128,0.1);color:#9CA3AF;border:1px solid rgba(107,114,128,0.2);}
+.s409{background:rgba(168,85,247,0.1);color:#C084FC;border:1px solid rgba(168,85,247,0.2);}
+.s429{background:rgba(239,68,68,0.1);color:#F87171;border:1px solid rgba(239,68,68,0.2);}
+
+/* ── PROMPT BOX ── */
+.prompt-box{
+  margin-top:12px;
+  background:rgba(6,182,212,0.04);
+  border:1px solid rgba(6,182,212,0.2);
+  border-radius:8px;
+  overflow:hidden;
+}
+.prompt-header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:rgba(6,182,212,0.07);
+  border-bottom:1px solid rgba(6,182,212,0.15);
+  cursor:pointer;
+  user-select:none;
+}
+.prompt-header:hover{background:rgba(6,182,212,0.11);}
+.prompt-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#22D3EE;text-transform:uppercase;font-weight:700;}
+.prompt-sublabel{font-size:11.5px;color:var(--muted2);margin-left:auto;}
+.prompt-chevron{color:#22D3EE;font-size:10px;transition:transform .2s;margin-left:6px;}
+.prompt-box.prompt-open .prompt-chevron{transform:rotate(180deg);}
+.prompt-content{display:none;padding:14px;}
+.prompt-box.prompt-open .prompt-content{display:block;}
+.prompt-text{
+  font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.9;
+  color:#A5D8FF;white-space:pre-wrap;word-break:break-word;
+}
+.copy-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:10px;padding:5px 12px;
+  background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);
+  border-radius:4px;color:#22D3EE;font-family:'JetBrains Mono',monospace;font-size:10px;
+  cursor:pointer;transition:all .15s;
+}
+.copy-btn:hover{background:rgba(6,182,212,0.2);}
+.copy-btn.copied{color:#34D399;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.1);}
+
+/* ── SCALE BOX ── */
+.scale-box{
+  margin-top:12px;
+  background:rgba(245,158,11,0.04);
+  border:1px solid rgba(245,158,11,0.2);
+  border-radius:8px;
+  overflow:hidden;
+}
+.scale-header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:rgba(245,158,11,0.07);
+  border-bottom:1px solid rgba(245,158,11,0.15);
+  cursor:pointer;user-select:none;
+}
+.scale-header:hover{background:rgba(245,158,11,0.11);}
+.scale-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#FCD34D;text-transform:uppercase;font-weight:700;}
+.scale-sublabel{font-size:11.5px;color:var(--muted2);margin-left:auto;}
+.scale-chevron{color:#FCD34D;font-size:10px;transition:transform .2s;margin-left:6px;}
+.scale-box.scale-open .scale-chevron{transform:rotate(180deg);}
+.scale-content{display:none;padding:14px;}
+.scale-box.scale-open .scale-content{display:block;}
+
+.scale-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:600px){.scale-grid{grid-template-columns:1fr;}}
+.scale-card{
+  background:rgba(245,158,11,0.05);
+  border:1px solid rgba(245,158,11,0.12);
+  border-radius:6px;padding:12px;
+}
+.scale-card-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FCD34D;margin-bottom:8px;letter-spacing:1px;}
+.scale-item{font-size:12px;color:#D4B896;line-height:1.75;padding:2px 0;}
+.scale-item b{color:#FDE68A;}
+.scale-item code{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FB923C;background:rgba(251,146,60,0.1);padding:1px 5px;border-radius:3px;}
+
+/* relation note */
+.rel-note{
+  margin-top:12px;padding:10px 14px;
+  background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.15);
+  border-radius:6px;font-size:12px;color:#93B4FF;
+  font-family:'JetBrains Mono',monospace;line-height:1.7;
+}
+.rel-note b{color:#60A5FA;}
+
+/* overview section */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:32px;}
+.ov-card{
+  background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:16px;cursor:pointer;transition:all .15s;
+}
+.ov-card:hover{border-color:var(--border2);background:var(--s3);}
+.ov-icon{font-size:26px;margin-bottom:8px;}
+.ov-name{font-size:13px;font-weight:600;margin-bottom:3px;}
+.ov-path{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted2);margin-bottom:8px;}
+.ov-num{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;}
+.ov-apis{font-size:10px;color:var(--muted2);}
+
+/* entity table */
+.entity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;}
+.entity-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.entity-card-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#60A5FA;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.entity-field{display:flex;gap:8px;align-items:baseline;padding:3px 0;font-size:11.5px;}
+.ef-name{font-family:'JetBrains Mono',monospace;color:#67E8F9;font-size:11px;min-width:120px;}
+.ef-type{font-family:'JetBrains Mono',monospace;color:#C084FC;font-size:10px;}
+.ef-fk{font-family:'JetBrains Mono',monospace;font-size:9px;color:#FB923C;margin-left:auto;}
+
+/* 1M ARCHITECTURE SECTION */
+.arch-banner{
+  background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(239,68,68,0.05));
+  border:1px solid rgba(245,158,11,0.25);
+  border-radius:10px;padding:20px;margin-bottom:28px;
+}
+.arch-banner-title{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#FCD34D;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.arch-banner-desc{font-size:12.5px;color:#B8956A;line-height:1.7;}
+
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:16px;}
+.arch-card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.15);border-radius:8px;padding:14px;}
+.arch-card-icon{font-size:18px;margin-bottom:6px;}
+.arch-card-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FCD34D;margin-bottom:8px;letter-spacing:1px;}
+.arch-card-body{font-size:12px;color:#C4A882;line-height:1.75;}
+.arch-card-body b{color:#FDE68A;}
+.arch-card-body code{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FB923C;background:rgba(251,146,60,0.1);padding:1px 5px;border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">Site<span>Khata</span></div>
+  <div class="topbar-divider"></div>
+  <div class="base-url">https://api.sitekhata.com/api/v1</div>
+  <div class="search-box">
+    <span style="color:var(--muted);font-size:13px;">⌕</span>
+    <input type="text" id="searchInput" placeholder="Search APIs..." oninput="filterAPIs(this.value)">
+  </div>
+  <div class="scale-badge">🚀 1M Users Ready</div>
+  <div class="api-count" id="apiCountBadge">⚡ 46 APIs · 10 Modules</div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-section">
+    <div class="sb-label">Overview</div>
+    <button class="sb-btn active" onclick="navTo('overview',this)"><span class="sb-icon">🗺️</span>All Modules<span class="sb-count">10</span></button>
+    <button class="sb-btn" onclick="navTo('arch1m',this)"><span class="sb-icon">🚀</span>1M Scale Arch<span class="sb-count">★</span></button>
+    <button class="sb-btn" onclick="navTo('entities',this)"><span class="sb-icon">🗄️</span>DB Entities<span class="sb-count">7</span></button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Auth</div>
+    <button class="sb-btn" onclick="navTo('auth',this)"><span class="sb-icon">🔐</span>Auth<span class="sb-count">4</span></button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Core</div>
+    <button class="sb-btn" onclick="navTo('sites',this)"><span class="sb-icon">🏗️</span>Sites<span class="sb-count">5</span></button>
+    <button class="sb-btn" onclick="navTo('transactions',this)"><span class="sb-icon">💰</span>Transactions<span class="sb-count">6</span></button>
+    <button class="sb-btn" onclick="navTo('dashboard',this)"><span class="sb-icon">📊</span>Dashboard<span class="sb-count">3</span></button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Construction</div>
+    <button class="sb-btn" onclick="navTo('completion',this)"><span class="sb-icon">✅</span>Completion<span class="sb-count">4</span></button>
+    <button class="sb-btn" onclick="navTo('casting',this)"><span class="sb-icon">🧱</span>Casting Dates<span class="sb-count">5</span></button>
+    <button class="sb-btn" onclick="navTo('activities',this)"><span class="sb-icon">⏱️</span>Activities<span class="sb-count">6</span></button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Misc</div>
+    <button class="sb-btn" onclick="navTo('reports',this)"><span class="sb-icon">📄</span>Reports<span class="sb-count">5</span></button>
+    <button class="sb-btn" onclick="navTo('reminders',this)"><span class="sb-icon">🔔</span>Reminders<span class="sb-count">5</span></button>
+    <button class="sb-btn" onclick="navTo('user',this)"><span class="sb-icon">👤</span>User<span class="sb-count">3</span></button>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<main class="content" id="mainContent">
+
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<div class="module-block" id="overview">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(59,130,246,0.1)">🗺️</div>
+    <div>
+      <div class="module-title">SiteKhata — API Overview</div>
+      <div class="module-path">React Native (Expo) + Node.js (Monolithic) + PostgreSQL + Drizzle ORM + Redis</div>
+    </div>
+  </div>
+  <div class="module-desc">
+    SiteKhata ek <b>offline-first mobile accounting app</b> hai small civil contractors ke liye. Contractor multiple building sites manage karta hai — har site ka paise ka hisaab (credit/debit), labour attendance, construction progress, casting dates, aur reminders track karta hai. <b>Monolithic Node.js backend</b> — single Express server, horizontally scalable, Redis cache, PostgreSQL read replicas. 1 million users tak handle karne ke liye designed.
+  </div>
+
+  <div class="overview-grid">
+    <div class="ov-card" onclick="navTo('auth')"><div class="ov-icon">🔐</div><div class="ov-name">Authentication</div><div class="ov-path">/auth</div><div class="ov-num" style="color:#EF4444">4</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('sites')"><div class="ov-icon">🏗️</div><div class="ov-name">Sites</div><div class="ov-path">/sites</div><div class="ov-num" style="color:#10B981">5</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('transactions')"><div class="ov-icon">💰</div><div class="ov-name">Transactions</div><div class="ov-path">/transactions</div><div class="ov-num" style="color:#F59E0B">6</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('dashboard')"><div class="ov-icon">📊</div><div class="ov-name">Dashboard</div><div class="ov-path">/dashboard</div><div class="ov-num" style="color:#3B82F6">3</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('completion')"><div class="ov-icon">✅</div><div class="ov-name">Completion</div><div class="ov-path">/completion</div><div class="ov-num" style="color:#10B981">4</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('casting')"><div class="ov-icon">🧱</div><div class="ov-name">Casting Dates</div><div class="ov-path">/casting</div><div class="ov-num" style="color:#06B6D4">5</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('activities')"><div class="ov-icon">⏱️</div><div class="ov-name">Activities</div><div class="ov-path">/activities</div><div class="ov-num" style="color:#A855F7">6</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('reports')"><div class="ov-icon">📄</div><div class="ov-name">Reports</div><div class="ov-path">/reports</div><div class="ov-num" style="color:#10B981">5</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('reminders')"><div class="ov-icon">🔔</div><div class="ov-name">Reminders</div><div class="ov-path">/reminders</div><div class="ov-num" style="color:#F59E0B">5</div><div class="ov-apis">APIs</div></div>
+    <div class="ov-card" onclick="navTo('user')"><div class="ov-icon">👤</div><div class="ov-name">User</div><div class="ov-path">/users</div><div class="ov-num" style="color:#A855F7">3</div><div class="ov-apis">APIs</div></div>
+  </div>
+
+  <div class="dbox full" style="margin-bottom:24px;">
+    <div class="dlabel">Module Dependency Map — Kaun Kisse Connect Hai</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2.2;color:#94A3B8;padding:8px 4px;overflow-x:auto;white-space:pre;">
+<span style="color:#60A5FA">Auth</span> ─────────────────────► <span style="color:#34D399">User (phone, role, token)</span>
+                                      │
+                          ┌───────────▼───────────┐
+                          │       <span style="color:#FCD34D">Sites</span>            │  ◄── Core Entity (siteId links everything)
+                          └─┬─────┬─────┬────┬───┘
+                            │     │     │    │
+              ┌─────────────▼─┐ ┌─▼──┐ │  ┌─▼──────────┐
+              │ <span style="color:#FB923C">Transactions</span>  │ │<span style="color:#A78BFA">Act-</span>│ │  │  <span style="color:#34D399">Completion</span> │
+              │ credit/debit  │ │<span style="color:#A78BFA">ivi-</span>│ │  │  12 stages  │
+              └──────┬────────┘ │<span style="color:#A78BFA">ties</span>│ │  └────────────┘
+                     │          └────┘ │
+              ┌──────▼────────┐      ┌─▼──────────┐
+              │  <span style="color:#60A5FA">Dashboard</span>   │      │  <span style="color:#06B6D4">Casting</span>    │
+              │  Aggregates   │      │  Dates      │
+              └───────────────┘      └────────────┘
+                                           │
+                                    ┌──────▼──────┐
+                                    │  <span style="color:#FCD34D">Reports</span>   │ ◄── Pulls from ALL modules
+                                    │  + PDF Gen  │
+                                    └─────────────┘
+    <span style="color:#FCD34D">Reminders</span> ──────────────────────► Linked to siteId (optional)
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ 1M SCALE ARCHITECTURE ═══════════════════ -->
+<div class="module-block" id="arch1m">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(245,158,11,0.12)">🚀</div>
+    <div>
+      <div class="module-title">1 Million Users — Monolithic Scale Architecture</div>
+      <div class="module-path">Node.js Monolith · PostgreSQL · Redis · PM2 Cluster · Nginx · AWS</div>
+    </div>
+    <div class="module-badge" style="background:rgba(245,158,11,0.1);color:#FCD34D;border:1px solid rgba(245,158,11,0.25)">★ Core Design</div>
+  </div>
+
+  <div class="arch-banner">
+    <div class="arch-banner-title">⚡ Why Monolith first? (Not Microservices)</div>
+    <div class="arch-banner-desc">
+      SiteKhata ke use case ke liye monolith sahi choice hai. 1M users = ~5000 concurrent users at peak. Ek well-optimized Node.js monolith + Redis cache + read replicas is easily 5-10M users tak handle kar sakta hai bina microservices complexity ke. Microservices tabhi karo jab team 20+ engineers ho aur deployment complexity justify ho.
+    </div>
+  </div>
+
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-card-icon">🌐</div>
+      <div class="arch-card-title">LAYER 1 — EDGE & CDN</div>
+      <div class="arch-card-body">
+        <b>Cloudflare CDN</b> — static assets, DDoS protection, SSL termination<br>
+        <b>Rate Limiting</b> at edge — <code>100 req/min</code> per IP<br>
+        <b>Geo-routing</b> — India traffic → Mumbai region<br>
+        <b>Bot protection</b> — challenge suspicious OTP requests
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">⚖️</div>
+      <div class="arch-card-title">LAYER 2 — LOAD BALANCER</div>
+      <div class="arch-card-body">
+        <b>Nginx</b> (or AWS ALB) — round-robin to app instances<br>
+        <b>Health checks</b> — <code>/health</code> endpoint, remove unhealthy pods<br>
+        <b>Sticky sessions</b> — NOT needed (stateless JWT)<br>
+        <b>WebSocket upgrade</b> — for activity timer live updates
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🖥️</div>
+      <div class="arch-card-title">LAYER 3 — APP SERVERS</div>
+      <div class="arch-card-body">
+        <b>Node.js + Express</b> monolith, <code>PM2 cluster mode</code> — 1 process per CPU core<br>
+        <b>Horizontal scaling</b> — 4-8 EC2 instances (t3.medium to c5.xlarge)<br>
+        <b>Auto-scaling group</b> — CPU &gt; 70% → add instance<br>
+        <b>Zero-downtime deploy</b> — rolling updates via PM2
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🗄️</div>
+      <div class="arch-card-title">LAYER 4 — DATABASE</div>
+      <div class="arch-card-body">
+        <b>PostgreSQL Primary</b> — all writes<br>
+        <b>2x Read Replicas</b> — GET APIs, reports, dashboard<br>
+        <b>PgBouncer</b> — connection pooling, max <code>100 connections</code> per instance<br>
+        <b>Indexes</b> — <code>siteId</code>, <code>userId</code>, <code>date</code>, <code>type</code> on transactions table
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">⚡</div>
+      <div class="arch-card-title">LAYER 5 — CACHE (REDIS)</div>
+      <div class="arch-card-body">
+        <b>Redis Cluster</b> (ElastiCache) — 3 shards for HA<br>
+        <b>OTP storage</b> — <code>otp:{phone}</code> TTL 300s<br>
+        <b>Dashboard cache</b> — <code>dash:{userId}</code> TTL 60s<br>
+        <b>Site stats cache</b> — <code>stats:{siteId}</code> TTL 30s, invalidate on new tx
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">📨</div>
+      <div class="arch-card-title">LAYER 6 — ASYNC JOBS</div>
+      <div class="arch-card-body">
+        <b>Bull Queue</b> (Redis-backed) — PDF generation, SMS sending<br>
+        <b>Worker process</b> — separate Node.js process for heavy jobs<br>
+        <b>Cron jobs</b> — reminder push notifications (daily 8AM)<br>
+        <b>Dead letter queue</b> — failed jobs retry 3x then alert
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">☁️</div>
+      <div class="arch-card-title">LAYER 7 — STORAGE</div>
+      <div class="arch-card-body">
+        <b>AWS S3</b> — PDF reports storage<br>
+        <b>Presigned URLs</b> — 1 hour expiry, direct client download<br>
+        <b>S3 Lifecycle rules</b> — delete reports older than 90 days<br>
+        <b>CloudFront</b> — in front of S3 for fast PDF downloads
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🔍</div>
+      <div class="arch-card-title">OBSERVABILITY</div>
+      <div class="arch-card-body">
+        <b>Sentry</b> — error tracking + source maps<br>
+        <b>Datadog / Grafana</b> — metrics, APM traces<br>
+        <b>Structured logs</b> — Winston JSON logs → CloudWatch<br>
+        <b>Alerts</b> — PagerDuty for p99 latency &gt; 2s, error rate &gt; 1%
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;">
+    <div class="dbox full">
+      <div class="dlabel">Capacity Planning — 1M Users</div>
+      <div class="codeblock"><span class="cc">// 1M registered users, ~5% DAU = 50,000 daily active users
+// Peak hour: 20% of DAU = 10,000 users in 1 hour = ~170 req/sec peak
+
+</span><span class="ck">CURRENT BOTTLENECKS TO ADDRESS:</span>
+<span class="ck2">1. Transactions SUM query</span>  → Cache stats per siteId in Redis (TTL 30s)
+                              → Add composite index: (siteId, type, date)
+<span class="ck2">2. Dashboard aggregate</span>     → Materialized view or Redis cache per userId
+<span class="ck2">3. PDF generation</span>         → Offload to Bull Queue worker, async response
+<span class="ck2">4. OTP rate limiting</span>       → Redis-based sliding window counter
+
+<span class="ck">DATABASE INDEXES (add to schema.ts):</span>
+CREATE INDEX idx_tx_siteid_type     ON transactions(siteId, type);
+CREATE INDEX idx_tx_siteid_date     ON transactions(siteId, date DESC);
+CREATE INDEX idx_sites_userid       ON sites(userId);
+CREATE INDEX idx_reminders_userid   ON reminders(userId, date);
+CREATE INDEX idx_tasks_siteid       ON site_tasks(siteId, status);
+
+<span class="ck">ESTIMATED INFRA COST (AWS, Mumbai):</span>
+  2x t3.medium  (App servers)   → ~$60/month
+  RDS PostgreSQL db.t3.medium   → ~$50/month
+  ElastiCache cache.t3.micro    → ~$15/month
+  ALB + data transfer           → ~$20/month
+  S3 + CloudFront               → ~$10/month
+  Total MVP                     → ~$155/month
+<span class="cc">  // Scale to 10x: upgrade to c5.xlarge + db.r5.large → ~$600/month</span></div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;">
+    <div class="dbox full">
+      <div class="dlabel">Monolith Folder Structure (Production)</div>
+      <div class="codeblock">sitekhata-api/
+├── src/
+│   ├── app.ts               <span class="cc">// Express app setup, middleware</span>
+│   ├── server.ts            <span class="cc">// HTTP server, graceful shutdown</span>
+│   ├── config/
+│   │   ├── database.ts      <span class="cc">// Drizzle + PgBouncer pool (primary + replica)</span>
+│   │   ├── redis.ts         <span class="cc">// ioredis cluster client</span>
+│   │   └── env.ts           <span class="cc">// zod env validation</span>
+│   ├── middleware/
+│   │   ├── auth.ts          <span class="cc">// JWT verify middleware</span>
+│   │   ├── rateLimit.ts     <span class="cc">// Redis sliding window rate limiter</span>
+│   │   ├── validate.ts      <span class="cc">// Zod schema validation</span>
+│   │   └── errorHandler.ts  <span class="cc">// Global error handler</span>
+│   ├── modules/             <span class="cc">// Each module = router + service + types</span>
+│   │   ├── auth/
+│   │   │   ├── auth.router.ts
+│   │   │   ├── auth.service.ts
+│   │   │   └── auth.schema.ts
+│   │   ├── sites/
+│   │   ├── transactions/
+│   │   ├── dashboard/
+│   │   ├── completion/
+│   │   ├── casting/
+│   │   ├── activities/
+│   │   ├── reports/
+│   │   ├── reminders/
+│   │   └── user/
+│   ├── jobs/
+│   │   ├── queue.ts         <span class="cc">// Bull queue setup</span>
+│   │   ├── pdfWorker.ts     <span class="cc">// PDF generation worker</span>
+│   │   └── reminderCron.ts  <span class="cc">// Daily push notification cron</span>
+│   ├── lib/
+│   │   ├── cache.ts         <span class="cc">// Redis cache helpers (get/set/invalidate)</span>
+│   │   ├── jwt.ts           <span class="cc">// Sign/verify JWT</span>
+│   │   └── pdf.ts           <span class="cc">// Puppeteer PDF generator</span>
+│   └── shared/
+│       └── schema.ts        <span class="cc">// Drizzle ORM schema (all tables)</span>
+├── ecosystem.config.js      <span class="cc">// PM2 cluster config</span>
+├── Dockerfile
+└── docker-compose.yml       <span class="cc">// local: app + postgres + redis</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ DB ENTITIES ═══════════════════ -->
+<div class="module-block" id="entities">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(16,185,129,0.1)">🗄️</div>
+    <div>
+      <div class="module-title">Database Entities (PostgreSQL + Drizzle)</div>
+      <div class="module-path">shared/schema.ts — 7 Tables</div>
+    </div>
+  </div>
+  <div class="entity-grid">
+    <div class="entity-card">
+      <div class="entity-card-name">AuthUser</div>
+      <div class="entity-field"><span class="ef-name">id</span><span class="ef-type">UUID PK</span></div>
+      <div class="entity-field"><span class="ef-name">phone</span><span class="ef-type">String UNIQUE</span></div>
+      <div class="entity-field"><span class="ef-name">role</span><span class="ef-type">CONTRACTOR</span></div>
+      <div class="entity-field"><span class="ef-name">refreshToken</span><span class="ef-type">String?</span></div>
+      <div class="entity-field"><span class="ef-name">loggedInAt</span><span class="ef-type">DateTime</span></div>
+      <div class="entity-field"><span class="ef-name">createdAt</span><span class="ef-type">DateTime</span></div>
+    </div>
+    <div class="entity-card">
+      <div class="entity-card-name">Site</div>
+      <div class="entity-field"><span class="ef-name">id</span><span class="ef-type">UUID PK</span></div>
+      <div class="entity-field"><span class="ef-name">userId</span><span class="ef-type">UUID FK</span><span class="ef-fk">→ AuthUser</span></div>
+      <div class="entity-field"><span class="ef-name">name</span><span class="ef-type">String</span></div>
+      <div class="entity-field"><span class="ef-name">address</span><span class="ef-type">String</span></div>
+      <div class="entity-field"><span class="ef-name">ownerPhone</span><span class="ef-type">String?</span></div>
+      <div class="entity-field"><span class="ef-name">budget</span><span class="ef-type">Decimal</span></div>
+      <div class="entity-field"><span class="ef-name">plotArea</span><span class="ef-type">Decimal?</span></div>
+      <div class="entity-field"><span class="ef-name">plotUnit</span><span class="ef-type">sqft | gaz</span></div>
+      <div class="entity-field"><span class="ef-name">startDate</span><span class="ef-type">Date</span></div>
+      <div class="entity-field"><span class="ef-name">endDate</span><span class="ef-type">Date?</span></div>
+      <div class="entity-field"><span class="ef-name">createdAt</span><span class="ef-type">DateTime</span></div>
+    </div>
+    <div class="entity-card">
+      <div class="entity-card-name">Transaction</div>
+      <div class="entity-field"><span class="ef-name">id</span><span class="ef-type">UUID PK</span></div>
+      <div class="entity-field"><span class="ef-name">siteId</span><span class="ef-type">UUID FK</span><span class="ef-fk">→ Site</span></div>
+      <div class="entity-field"><span class="ef-name">type</span><span class="ef-type">credit | debit</span></div>
+      <div class="entity-field"><span class="ef-name">category</span><span class="ef-type">material | labour</span></div>
+      <div class="entity-field"><span class="ef-name">subCategory</span><span class="ef-type">String</span></div>
+      <div class="entity-field"><span class="ef-name">amount</span><span class="ef-type">Decimal</span></div>
+      <div class="entity-field"><span class="ef-name">paymentMode</span><span class="ef-type">cash|bank|cheque|upi</span></div>
+      <div class="entity-field"><span class="ef-name">date</span><span class="ef-type">Date</span></div>
+      <div class="entity-field"><span class="ef-name">note</span><span class="ef-type">String?</span></div>
+      <div class="entity-field"><span class="ef-name">createdAt</span><span class="ef-type">DateTime</span></div>
+    </div>
+    <div class="entity-card">
+      <div class="entity-card-name">SiteTask (Activity)</div>
+      <div class="entity-field"><span class="ef-name">id</span><span class="ef-type">UUID PK</span></div>
+      <div class="entity-field"><span class="ef-name">siteId</span><span class="ef-type">UUID FK</span><span class="ef-fk">→ Site</span></div>
+      <div class="entity-field"><span class="ef-name">name</span><span class="ef-type">String</span></div>
+      <div class="entity-field"><span class="ef-name">category</span><span class="ef-type">String</span></div>
+      <div class="entity-field"><span class="ef-name">status</span><span class="ef-type">pending|running|paused|done</span></div>
+      <div class="entity-field"><span class="ef-name">startTime</span><span class="ef-type">DateTime?</span></div>
+      <div class="entity-field"><span class="ef-name">endTime</span><span class="ef-type">DateTime?</span></div>
+      <div class="entity-field"><span class="ef-name">pausedDuration</span><span class="ef-type">Int (seconds)</span></div>
+      <div class="entity-field"><span class="ef-name">createdAt</span><span class="ef-type">DateTime</span></div>
+    </div>
+    <div class="entity-card">
+      <div class="entity-card-name">CastingDate</div>
+      <div class="entity-field"><span class="ef-name">id</span><span class="ef-type">UUID PK</span></div>
+      <div class="entity-field"><span class="ef-name">siteId</span><span class="ef-type">UUID FK</span><span class="ef-fk">→ Site</span></div>
+      <div class="entity-field"><span class="ef-name">castingType</span><span class="ef-type">foundation|plinth|column|slab|granite</span></div>
+      <div class="entity-field"><span class="ef-name">date</span><span class="ef-type">Date (start)</span></div>
+      <div class="entity-field"><span class="ef-name">endDate</span><span class="ef-type">Date?</span></div>
+      <div class="entity-field"><span class="ef-name">note</span><span class="ef-type">String?</span></div>
+      <div class="entity-field"><span class="ef-name">createdAt</span><span class="ef-type">DateTime</span></div>
+    </div>
+    <div class="entity-card">
+      <div class="entity-card-name">SiteCompletion</div>
+      <div class="entity-field"><span class="ef-name">siteId</span><span class="ef-type">UUID PK FK</span><span class="ef-fk">→ Site</span></div>
+      <div class="entity-field"><span class="ef-name">completedStages</span><span class="ef-type">String[] (array)</span></div>
+      <div style="margin-top:8px;font-size:11px;color:var(--muted2);font-family:'JetBrains Mono',monospace;">
+        Stages: foundation, slab_casting, brick_work, plaster, plumbing_rough, electrical_rough, flooring, door_window, painting, final_plumbing, final_electrical, fabrication
+      </div>
+    </div>
+    <div class="entity-card">
+      <div class="entity-card-name">Reminder</div>
+      <div class="entity-field"><span class="ef-name">id</span><span class="ef-type">UUID PK</span></div>
+      <div class="entity-field"><span class="ef-name">siteId</span><span class="ef-type">UUID FK?</span><span class="ef-fk">→ Site (optional)</span></div>
+      <div class="entity-field"><span class="ef-name">userId</span><span class="ef-type">UUID FK</span><span class="ef-fk">→ AuthUser</span></div>
+      <div class="entity-field"><span class="ef-name">title</span><span class="ef-type">String</span></div>
+      <div class="entity-field"><span class="ef-name">date</span><span class="ef-type">DateTime</span></div>
+      <div class="entity-field"><span class="ef-name">createdAt</span><span class="ef-type">DateTime</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ AUTH ═══════════════════ -->
+<div class="module-block" id="auth">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(239,68,68,0.1)">🔐</div>
+    <div><div class="module-title">Authentication</div><div class="module-path">/api/v1/auth</div></div>
+    <div class="module-badge" style="background:rgba(239,68,68,0.1);color:#F87171;border:1px solid rgba(239,68,68,0.2)">4 APIs</div>
+  </div>
+  <div class="module-desc">Phone OTP login flow — 3 screens: welcome → phone → OTP. Session JWT mein store hota hai, AsyncStorage se persist hota hai app restart pe. Currently simulated OTP, production mein MSG91/Fast2SMS se real SMS. Redis-backed OTP with rate limiting.</div>
+  <div class="conn-map"><span class="conn-label">CREATES →</span><span class="conn-chip primary">AuthUser row</span><span class="conn-chip primary">JWT accessToken</span><span class="conn-chip primary">JWT refreshToken</span><span class="conn-label" style="margin-left:8px">USED BY →</span><span class="conn-chip">Every protected API</span></div>
+
+  <!-- send-otp -->
+  <div class="api-row" id="api-auth-1">
+    <div class="api-top" onclick="tog('auth-1')">
+      <span class="method m-POST">POST</span>
+      <span class="api-path-text"><span class="seg-base">/auth/</span>send-otp</span>
+      <div class="api-chips"><span class="chip chip-pub">🌐 Public</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Phone number bhejo → OTP generate hota hai → SMS jaata hai (MSG91/Fast2SMS). OTP Redis mein 5 minute ke liye store hota hai. Rate limit: 3 OTP per hour per phone.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Request Body</div>
+          <table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th><th>Notes</th></tr>
+          <tr><td class="pname">phone</td><td class="ptype">string</td><td class="preq r">required</td><td class="pdesc">+91XXXXXXXXXX format</td></tr>
+          </table>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"success"</span>: <span class="cv">true</span>,
+  <span class="ck2">"message"</span>: <span class="cs">"OTP sent"</span>,
+  <span class="ck2">"expiresIn"</span>: <span class="cn">300</span> <span class="cc">// seconds</span>
+}</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s400">400 Invalid phone</span><span class="sc s429">429 Rate limited</span></div></div>
+      </div>
+      <div class="rel-note">🔗 <b>Redis:</b> OTP key = <b>otp:{phone}</b>, TTL 300s. OTP auto-delete after verify.</div>
+
+      <div class="prompt-box" id="prompt-auth-1">
+        <div class="prompt-header" onclick="togPrompt('auth-1')">
+          <span>🤖</span>
+          <span class="prompt-label">AI Implementation Prompt</span>
+          <span class="prompt-sublabel">Copy → paste in Cursor / Claude</span>
+          <span class="prompt-chevron">▼</span>
+        </div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-auth-1">Build POST /api/v1/auth/send-otp endpoint in Node.js + Express + TypeScript using Drizzle ORM with PostgreSQL.
+
+REQUIREMENTS:
+- Accept { phone: string } in request body
+- Validate phone: must match /^\+91[6-9]\d{9}$/ regex, return 400 if invalid
+- Redis sliding window rate limit: max 3 OTP requests per phone per hour
+  - Key: "otp_limit:{phone}", INCR + EXPIRE 3600 if new key, return 429 if count > 3
+- Generate 4-digit random OTP: Math.floor(1000 + Math.random() * 9000).toString()
+- Store in Redis: SET "otp:{phone}" "{otp}" EX 300
+- In DEV: console.log OTP, skip SMS
+- In PROD: call MSG91 API (POST https://api.msg91.com/api/v5/otp) with template_id, mobile, OTP
+- Return { success: true, message: "OTP sent", expiresIn: 300 }
+
+TECH STACK: Express, ioredis, zod for validation, axios for SMS API
+FILE: src/modules/auth/auth.service.ts → sendOtp(phone: string)
+      src/modules/auth/auth.router.ts  → POST /send-otp route
+
+ERROR HANDLING: Wrap in try-catch, use custom AppError class, pass to global errorHandler middleware.
+DO NOT store OTP in PostgreSQL. Redis only.</div>
+          <button class="copy-btn" onclick="copyPrompt('auth-1')">📋 Copy Prompt</button>
+        </div>
+      </div>
+
+      <div class="scale-box" id="scale-auth-1">
+        <div class="scale-header" onclick="togScale('auth-1')">
+          <span>🚀</span>
+          <span class="scale-label">1M Scale Notes</span>
+          <span class="scale-sublabel">Performance & reliability</span>
+          <span class="scale-chevron">▼</span>
+        </div>
+        <div class="scale-content">
+          <div class="scale-grid">
+            <div class="scale-card">
+              <div class="scale-card-title">RATE LIMITING</div>
+              <div class="scale-item"><b>Redis sliding window</b> — not in-memory (won't work across multiple app instances)</div>
+              <div class="scale-item">Key: <code>otp_limit:{phone}</code>, max 3/hour. Prevents SMS spam cost explosion at scale.</div>
+              <div class="scale-item"><b>Cloudflare</b> edge rate limit — block at CDN level before hitting server</div>
+            </div>
+            <div class="scale-card">
+              <div class="scale-card-title">SMS PROVIDER</div>
+              <div class="scale-item"><b>Primary:</b> MSG91 (cheap, India-focused, DLT registered)</div>
+              <div class="scale-item"><b>Fallback:</b> Fast2SMS via Bull Queue retry logic</div>
+              <div class="scale-item"><b>Cost at 1M users:</b> ~50K OTPs/day × ₹0.15 = <b>₹7,500/day</b> — plan accordingly</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- verify-otp -->
+  <div class="api-row" id="api-auth-2">
+    <div class="api-top" onclick="tog('auth-2')">
+      <span class="method m-POST">POST</span>
+      <span class="api-path-text"><span class="seg-base">/auth/</span>verify-otp</span>
+      <div class="api-chips"><span class="chip chip-pub">🌐 Public</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">OTP verify karo → agar sahi hai toh user create/fetch karo (upsert) → accessToken (15min) + refreshToken (7 days) return karo.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Request Body</div>
+          <table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th><th>Notes</th></tr>
+          <tr><td class="pname">phone</td><td class="ptype">string</td><td class="preq r">required</td><td class="pdesc">Same as send-otp</td></tr>
+          <tr><td class="pname">otp</td><td class="ptype">string</td><td class="preq r">required</td><td class="pdesc">4-digit code</td></tr>
+          </table>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"accessToken"</span>: <span class="cs">"eyJhbGci..."</span>,
+  <span class="ck2">"refreshToken"</span>: <span class="cs">"eyJhbGci..."</span>,
+  <span class="ck2">"user"</span>: {
+    <span class="ck2">"id"</span>: <span class="cs">"uuid"</span>,
+    <span class="ck2">"phone"</span>: <span class="cs">"+91..."</span>,
+    <span class="ck2">"role"</span>: <span class="cs">"CONTRACTOR"</span>,
+    <span class="ck2">"isNew"</span>: <span class="cv">true</span>
+  }
+}</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s400">400 Wrong OTP</span><span class="sc s401">401 OTP expired</span></div></div>
+      </div>
+      <div class="rel-note">🔗 <b>AuthUser upsert:</b> phone exist karta hai → existing user fetch, nahi → naya row create. <b>refreshToken DB mein save hota hai</b> for rotation.</div>
+
+      <div class="prompt-box" id="prompt-auth-2">
+        <div class="prompt-header" onclick="togPrompt('auth-2')">
+          <span>🤖</span><span class="prompt-label">AI Implementation Prompt</span>
+          <span class="prompt-sublabel">Copy → paste in Cursor / Claude</span>
+          <span class="prompt-chevron">▼</span>
+        </div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-auth-2">Build POST /api/v1/auth/verify-otp endpoint in Node.js + Express + TypeScript.
+
+REQUIREMENTS:
+1. Accept { phone: string, otp: string } — validate with zod
+2. Fetch OTP from Redis: GET "otp:{phone}"
+   - If null → return 401 { error: "OTP expired or not sent" }
+   - If mismatch → return 400 { error: "Invalid OTP" }
+   - If match → proceed
+3. Delete OTP from Redis immediately: DEL "otp:{phone}"
+4. Upsert AuthUser in PostgreSQL using Drizzle:
+   INSERT INTO auth_users (id, phone, role) VALUES (uuid(), phone, 'CONTRACTOR')
+   ON CONFLICT (phone) DO UPDATE SET logged_in_at = NOW()
+   RETURNING *
+5. Generate JWT tokens:
+   - accessToken: jwt.sign({ userId, phone, role }, JWT_SECRET, { expiresIn: '15m' })
+   - refreshToken: jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: '7d' })
+6. Save refreshToken hash (bcrypt, rounds=10) to auth_users.refresh_token in DB
+7. Return { accessToken, refreshToken, user: { id, phone, role, isNew } }
+   - isNew = true if user was just created (check if logged_in_at === createdAt)
+
+SECURITY: Never return raw refreshToken in logs. Hash before storing in DB.
+FILE: src/modules/auth/auth.service.ts → verifyOtp(phone, otp)
+Use Drizzle's db.insert().onConflictDoUpdate() for upsert.</div>
+          <button class="copy-btn" onclick="copyPrompt('auth-2')">📋 Copy Prompt</button>
+        </div>
+      </div>
+      <div class="scale-box" id="scale-auth-2">
+        <div class="scale-header" onclick="togScale('auth-2')">
+          <span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Token security at scale</span><span class="scale-chevron">▼</span>
+        </div>
+        <div class="scale-content">
+          <div class="scale-grid">
+            <div class="scale-card">
+              <div class="scale-card-title">JWT STRATEGY</div>
+              <div class="scale-item"><b>Short-lived accessToken</b> (15 min) — stateless, no DB lookup needed on every request</div>
+              <div class="scale-item"><b>refreshToken rotation</b> — new token every refresh, old token invalidated. Prevents token theft.</div>
+              <div class="scale-item">Store only <b>bcrypt hash</b> of refreshToken in DB — not plaintext</div>
+            </div>
+            <div class="scale-card">
+              <div class="scale-card-title">DB UPSERT PERFORMANCE</div>
+              <div class="scale-item">ON CONFLICT DO UPDATE is <b>single atomic query</b> — no race condition possible</div>
+              <div class="scale-item"><b>Index on phone column</b> (UNIQUE) — O(1) lookup even at 1M users</div>
+              <div class="scale-item">Update <code>logged_in_at</code> — useful for analytics and inactive user cleanup</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- refresh -->
+  <div class="api-row" id="api-auth-3">
+    <div class="api-top" onclick="tog('auth-3')">
+      <span class="method m-POST">POST</span>
+      <span class="api-path-text"><span class="seg-base">/auth/</span>refresh-token</span>
+      <div class="api-chips"><span class="chip chip-pub">🌐 Public</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">accessToken expire hone pe naya lo bina re-login ke. Refresh token DB se match hota hai → naya accessToken + rotated refreshToken milta hai.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Request Body</div>
+          <table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr>
+          <tr><td class="pname">refreshToken</td><td class="ptype">string</td><td class="preq r">required</td></tr>
+          </table>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"accessToken"</span>: <span class="cs">"eyJ... (new)"</span>,
+  <span class="ck2">"refreshToken"</span>: <span class="cs">"eyJ... (rotated)"</span>
+}</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s401">401 Invalid/expired refresh</span></div></div>
+      </div>
+      <div class="prompt-box" id="prompt-auth-3">
+        <div class="prompt-header" onclick="togPrompt('auth-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-auth-3">Build POST /api/v1/auth/refresh-token endpoint.
+
+REQUIREMENTS:
+1. Accept { refreshToken: string } in body
+2. Verify JWT: jwt.verify(refreshToken, REFRESH_SECRET)
+   - If expired or invalid → 401 { error: "Invalid refresh token" }
+3. Extract userId from decoded payload
+4. Fetch user from DB: SELECT * FROM auth_users WHERE id = userId
+5. Compare incoming refreshToken with stored hash: bcrypt.compare(refreshToken, user.refreshToken)
+   - If mismatch → 401 (possible token reuse attack — log warning)
+6. Generate new token pair:
+   - newAccessToken: jwt.sign({ userId, phone, role }, JWT_SECRET, { expiresIn: '15m' })
+   - newRefreshToken: jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: '7d' })
+7. Update DB: SET refresh_token = bcrypt.hash(newRefreshToken, 10) WHERE id = userId
+8. Return { accessToken: newAccessToken, refreshToken: newRefreshToken }
+
+SECURITY NOTE: This implements refresh token rotation. If old token is reused after rotation → 
+treat as theft → null out refreshToken in DB → force re-login.
+FILE: src/modules/auth/auth.service.ts → refreshToken(token: string)</div>
+          <button class="copy-btn" onclick="copyPrompt('auth-3')">📋 Copy Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- logout -->
+  <div class="api-row" id="api-auth-4">
+    <div class="api-top" onclick="tog('auth-4')">
+      <span class="method m-POST">POST</span>
+      <span class="api-path-text"><span class="seg-base">/auth/</span>logout</span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">DB se refreshToken null karo → client pe AsyncStorage clear karo → logged out.</div>
+      <div class="detail-grid single">
+        <div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"success"</span>: <span class="cv">true</span>, <span class="ck2">"message"</span>: <span class="cs">"Logged out"</span> }</div></div>
+      </div>
+      <div class="prompt-box" id="prompt-auth-4">
+        <div class="prompt-header" onclick="togPrompt('auth-4')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-auth-4">Build POST /api/v1/auth/logout endpoint — protected by JWT middleware.
+
+REQUIREMENTS:
+1. Middleware: verifyJWT extracts userId from Authorization: Bearer {token} header
+2. Update DB: SET refresh_token = NULL, logged_in_at = NOW() WHERE id = userId
+3. Return { success: true, message: "Logged out successfully" }
+
+MIDDLEWARE (src/middleware/auth.ts):
+- Extract Bearer token from Authorization header
+- jwt.verify(token, JWT_SECRET) → decoded
+- If expired: return 401 { error: "Token expired" }
+- If invalid: return 401 { error: "Invalid token" }
+- Attach decoded to req.user for downstream handlers
+
+NOTE: No need to blacklist JWT (they're short-lived 15min). Nulling refreshToken is sufficient.
+Mobile app should clear AsyncStorage keys: ['accessToken', 'refreshToken', 'user'] on logout.</div>
+          <button class="copy-btn" onclick="copyPrompt('auth-4')">📋 Copy Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SITES ═══════════════════ -->
+<div class="module-block" id="sites">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(16,185,129,0.1)">🏗️</div>
+    <div><div class="module-title">Sites Management</div><div class="module-path">/api/v1/sites</div></div>
+    <div class="module-badge" style="background:rgba(16,185,129,0.1);color:#34D399;border:1px solid rgba(16,185,129,0.2)">5 APIs</div>
+  </div>
+  <div class="module-desc">App ka core entity — har "site" ek construction project hai. Site create hone ke baad usse saare modules link hote hain. Site delete karne se cascade mein sab kuch delete hota hai.</div>
+  <div class="conn-map">
+    <span class="conn-label">siteId USED IN →</span>
+    <span class="conn-chip primary">Transaction.siteId</span><span class="conn-chip primary">CastingDate.siteId</span><span class="conn-chip primary">SiteTask.siteId</span><span class="conn-chip primary">SiteCompletion.siteId</span><span class="conn-chip primary">Reminder.siteId</span>
+  </div>
+
+  <div class="api-row" id="api-sites-1">
+    <div class="api-top" onclick="tog('sites-1')">
+      <span class="method m-GET">GET</span>
+      <span class="api-path-text"><span class="seg-base">/sites</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Logged-in contractor ki saari sites. Har site ke saath live financial summary bhi aata hai (credit, debit, balance) — dashboard cards ke liye.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Query Params (optional)</div>
+          <table class="param-table"><tr><th>Param</th><th>Type</th><th>Notes</th></tr>
+          <tr><td class="pname">search</td><td class="ptype">string</td><td class="pdesc">Site name se search</td></tr>
+          <tr><td class="pname">sort</td><td class="ptype">createdAt|name</td><td class="pdesc">Default: createdAt desc</td></tr>
+          </table>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"sites"</span>: [{
+    <span class="ck2">"id"</span>: <span class="cs">"uuid"</span>, <span class="ck2">"name"</span>: <span class="cs">"Sharma Villa"</span>,
+    <span class="ck2">"budget"</span>: <span class="cn">1500000</span>,
+    <span class="ck2">"totalCredit"</span>: <span class="cn">800000</span>,
+    <span class="ck2">"totalDebit"</span>: <span class="cn">620000</span>,
+    <span class="ck2">"balance"</span>: <span class="cn">180000</span>,
+    <span class="ck2">"completionPercent"</span>: <span class="cn">58.3</span>
+  }], <span class="ck2">"total"</span>: <span class="cn">6</span>
+}</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s401">401 Unauthorized</span></div></div>
+      </div>
+      <div class="rel-note">🔗 <b>calculateSiteStats():</b> SUM(transactions WHERE type=credit/debit) — real-time, not stored.</div>
+      <div class="prompt-box" id="prompt-sites-1">
+        <div class="prompt-header" onclick="togPrompt('sites-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-sites-1">Build GET /api/v1/sites endpoint — JWT protected, returns all sites for logged-in user with financial summary.
+
+REQUIREMENTS:
+1. Extract userId from req.user (set by JWT middleware)
+2. Accept query params: search (string, optional), sort ('createdAt' | 'name', default 'createdAt')
+3. Drizzle query — JOIN sites with transactions to get aggregated stats:
+
+   const sites = await db
+     .select({
+       id: sitesTable.id, name: sitesTable.name, address: sitesTable.address,
+       budget: sitesTable.budget, plotArea: sitesTable.plotArea, plotUnit: sitesTable.plotUnit,
+       startDate: sitesTable.startDate, endDate: sitesTable.endDate, createdAt: sitesTable.createdAt,
+       totalCredit: sql<number>`COALESCE(SUM(CASE WHEN ${txTable.type} = 'credit' THEN ${txTable.amount} ELSE 0 END), 0)`,
+       totalDebit: sql<number>`COALESCE(SUM(CASE WHEN ${txTable.type} = 'debit' THEN ${txTable.amount} ELSE 0 END), 0)`,
+     })
+     .from(sitesTable)
+     .leftJoin(txTable, eq(txTable.siteId, sitesTable.id))
+     .where(eq(sitesTable.userId, userId))
+     .groupBy(sitesTable.id)
+
+4. Also join SiteCompletion to calculate completionPercent:
+   completionPercent = (completedStages.length / 12) * 100
+
+5. Apply search filter: ilike(sitesTable.name, `%${search}%`) if search provided
+6. Apply sort: orderBy(sort === 'name' ? asc(sitesTable.name) : desc(sitesTable.createdAt))
+7. Calculate balance = totalCredit - totalDebit per site
+8. Return { sites: [...], total: sites.length }
+
+CACHE STRATEGY: Cache result in Redis key "sites_list:{userId}" TTL 30s.
+Invalidate this key whenever a site or transaction is created/updated/deleted for this user.
+FILE: src/modules/sites/sites.service.ts → getUserSites(userId, query)</div>
+          <button class="copy-btn" onclick="copyPrompt('sites-1')">📋 Copy Prompt</button>
+        </div>
+      </div>
+      <div class="scale-box" id="scale-sites-1">
+        <div class="scale-header" onclick="togScale('sites-1')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Aggregation strategy</span><span class="scale-chevron">▼</span></div>
+        <div class="scale-content">
+          <div class="scale-grid">
+            <div class="scale-card">
+              <div class="scale-card-title">QUERY OPTIMIZATION</div>
+              <div class="scale-item"><b>Single GROUP BY query</b> beats N+1 queries (fetching each site then each sum separately)</div>
+              <div class="scale-item">Add index: <code>CREATE INDEX idx_tx_siteid_type ON transactions(siteId, type)</code></div>
+              <div class="scale-item">Read replica use karo for this GET — primary DB ko free rakho writes ke liye</div>
+            </div>
+            <div class="scale-card">
+              <div class="scale-card-title">CACHING</div>
+              <div class="scale-item">Redis cache key: <code>sites_list:{userId}</code>, TTL 30 seconds</div>
+              <div class="scale-item"><b>Cache invalidation:</b> On any transaction POST/PUT/DELETE for this user → DEL "sites_list:{userId}"</div>
+              <div class="scale-item">Average contractor has 5-10 sites — response payload ~2KB, fits easily in Redis</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-sites-2">
+    <div class="api-top" onclick="tog('sites-2')">
+      <span class="method m-POST">POST</span>
+      <span class="api-path-text"><span class="seg-base">/sites</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Nayi site create karo. Site save hone ke baad automatically SiteCompletion row bhi initialize hoti hai (12 empty stages ke saath).</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Request Body</div>
+          <table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th><th>Notes</th></tr>
+          <tr><td class="pname">name</td><td class="ptype">string</td><td class="preq r">required</td><td class="pdesc">Client/project name</td></tr>
+          <tr><td class="pname">address</td><td class="ptype">string</td><td class="preq r">required</td><td class="pdesc">Full address</td></tr>
+          <tr><td class="pname">budget</td><td class="ptype">number</td><td class="preq r">required</td><td class="pdesc">Total cost estimate</td></tr>
+          <tr><td class="pname">startDate</td><td class="ptype">date</td><td class="preq r">required</td><td class="pdesc">YYYY-MM-DD</td></tr>
+          <tr><td class="pname">endDate</td><td class="ptype">date</td><td class="preq o">optional</td><td class="pdesc">Expected completion</td></tr>
+          <tr><td class="pname">plotArea</td><td class="ptype">number</td><td class="preq o">optional</td><td></td></tr>
+          <tr><td class="pname">plotUnit</td><td class="ptype">sqft|gaz</td><td class="preq o">optional</td><td class="pdesc">Default: sqft</td></tr>
+          <tr><td class="pname">ownerPhone</td><td class="ptype">string</td><td class="preq o">optional</td><td class="pdesc">Future owner-login</td></tr>
+          </table>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 201</div>
+          <div class="codeblock">{ <span class="ck2">"success"</span>: <span class="cv">true</span>, <span class="ck2">"site"</span>: { <span class="cc">...created site</span> } }</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400 Validation</span><span class="sc s401">401</span></div></div>
+      </div>
+      <div class="rel-note">🔗 Site create hone ke baad <b>SiteCompletion initialize hoti hai automatically</b> in same DB transaction.</div>
+      <div class="prompt-box" id="prompt-sites-2">
+        <div class="prompt-header" onclick="togPrompt('sites-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-sites-2">Build POST /api/v1/sites endpoint — JWT protected, create new construction site.
+
+REQUIREMENTS:
+1. Validate body with Zod schema:
+   { name: z.string().min(2).max(100), address: z.string().min(5),
+     budget: z.number().positive(), startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+     endDate: z.string().optional(), plotArea: z.number().positive().optional(),
+     plotUnit: z.enum(['sqft','gaz']).default('sqft'), ownerPhone: z.string().optional() }
+
+2. Use Drizzle DB transaction to do BOTH inserts atomically:
+   await db.transaction(async (tx) => {
+     const [site] = await tx.insert(sitesTable).values({
+       id: crypto.randomUUID(), userId: req.user.userId,
+       name, address, budget, startDate, endDate, plotArea, plotUnit, ownerPhone,
+       createdAt: new Date()
+     }).returning();
+     
+     await tx.insert(siteCompletionTable).values({
+       siteId: site.id, completedStages: []
+     });
+     
+     return site;
+   });
+
+3. Invalidate Redis cache: DEL "sites_list:{userId}"
+4. Return 201 { success: true, site: newSite }
+
+IMPORTANT: Both inserts MUST be in same DB transaction. If SiteCompletion insert fails, Site insert should also rollback.
+FILE: src/modules/sites/sites.service.ts → createSite(userId, data)</div>
+          <button class="copy-btn" onclick="copyPrompt('sites-2')">📋 Copy Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-sites-3">
+    <div class="api-top" onclick="tog('sites-3')">
+      <span class="method m-GET">GET</span>
+      <span class="api-path-text"><span class="seg-base">/sites/</span><span class="seg-param">:siteId</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Ek site ka poora detail — financial summary, transactions, completion %, casting dates, active activity — ek API call mein.</div>
+      <div class="detail-grid">
+        <div class="dbox full"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"site"</span>: { <span class="ck2">"id"</span>, <span class="ck2">"name"</span>, <span class="ck2">"address"</span>, <span class="ck2">"budget"</span> },
+  <span class="ck2">"financialSummary"</span>: { <span class="ck2">"totalCredit"</span>: <span class="cn">800000</span>, <span class="ck2">"totalDebit"</span>: <span class="cn">620000</span>, <span class="ck2">"balance"</span>: <span class="cn">180000</span>, <span class="ck2">"budgetUsedPercent"</span>: <span class="cn">41.3</span> },
+  <span class="ck2">"completionPercent"</span>: <span class="cn">58.3</span>, <span class="ck2">"completedStages"</span>: [<span class="cs">"foundation"</span>, <span class="cc">...</span>],
+  <span class="ck2">"recentTransactions"</span>: [ <span class="cc">// last 10</span> ],
+  <span class="ck2">"castingDates"</span>: [ <span class="cc">// all</span> ],
+  <span class="ck2">"activeTask"</span>: { <span class="cc">// currently running task</span> }
+}</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s401">401</span><span class="sc s404">404</span></div></div>
+      </div>
+      <div class="prompt-box" id="prompt-sites-3">
+        <div class="prompt-header" onclick="togPrompt('sites-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-sites-3">Build GET /api/v1/sites/:siteId endpoint — returns full site detail with all linked data in one call.
+
+REQUIREMENTS:
+1. Verify site belongs to req.user.userId — if not, return 404 (don't leak existence to other users)
+2. Run these queries in parallel using Promise.all() for performance:
+   const [siteRow, txStats, completion, recentTx, castings, activeTask] = await Promise.all([
+     db.select().from(sitesTable).where(eq(sitesTable.id, siteId)).limit(1),
+     db.select({ totalCredit: sql`SUM(CASE WHEN type='credit' THEN amount ELSE 0 END)`,
+                 totalDebit: sql`SUM(CASE WHEN type='debit' THEN amount ELSE 0 END)` })
+       .from(txTable).where(eq(txTable.siteId, siteId)),
+     db.select().from(siteCompletionTable).where(eq(siteCompletionTable.siteId, siteId)).limit(1),
+     db.select().from(txTable).where(eq(txTable.siteId, siteId)).orderBy(desc(txTable.date)).limit(10),
+     db.select().from(castingTable).where(eq(castingTable.siteId, siteId)).orderBy(desc(castingTable.date)),
+     db.select().from(tasksTable).where(and(eq(tasksTable.siteId, siteId), inArray(tasksTable.status, ['running','paused']))).limit(1),
+   ]);
+
+3. Calculate: balance = totalCredit - totalDebit, budgetUsedPercent = (totalDebit / budget) * 100
+4. completionPercent = (completedStages.length / 12) * 100
+5. Return assembled response object
+
+CACHE: Cache full response as "site_detail:{siteId}" TTL 15s. Invalidate on any write to this site.
+READ REPLICA: Use db replica connection for all SELECT queries in this endpoint.
+FILE: src/modules/sites/sites.service.ts → getSiteDetail(siteId, userId)</div>
+          <button class="copy-btn" onclick="copyPrompt('sites-3')">📋 Copy Prompt</button>
+        </div>
+      </div>
+      <div class="scale-box" id="scale-sites-3">
+        <div class="scale-header" onclick="togScale('sites-3')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Parallel queries strategy</span><span class="scale-chevron">▼</span></div>
+        <div class="scale-content">
+          <div class="scale-grid">
+            <div class="scale-card">
+              <div class="scale-card-title">PROMISE.ALL PATTERN</div>
+              <div class="scale-item">6 queries sequential = ~60ms. <b>Promise.all = ~15ms</b> (limited by slowest query)</div>
+              <div class="scale-item">This is the most-called endpoint — optimize aggressively</div>
+            </div>
+            <div class="scale-card">
+              <div class="scale-card-title">READ REPLICA ROUTING</div>
+              <div class="scale-item">All GETs on site detail → read replica. <b>Never hit primary for reads.</b></div>
+              <div class="scale-item">Drizzle: create <code>dbReadReplica</code> separate client config pointing to replica host</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-sites-4">
+    <div class="api-top" onclick="tog('sites-4')">
+      <span class="method m-PUT">PUT</span>
+      <span class="api-path-text"><span class="seg-base">/sites/</span><span class="seg-param">:siteId</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Site details update karo — name, budget, dates, address.</div>
+      <div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s400">400</span><span class="sc s404">404</span></div></div></div>
+      <div class="prompt-box" id="prompt-sites-4">
+        <div class="prompt-header" onclick="togPrompt('sites-4')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-sites-4">Build PUT /api/v1/sites/:siteId — update site details. JWT protected.
+
+REQUIREMENTS:
+1. Verify ownership: SELECT id FROM sites WHERE id = siteId AND userId = req.user.userId. If not found → 404.
+2. Validate partial body with Zod (all fields optional):
+   z.object({ name, address, budget, startDate, endDate, plotArea, plotUnit, ownerPhone }).partial()
+3. Build update object with only provided fields (ignore undefined keys)
+4. Drizzle update: db.update(sitesTable).set(updateData).where(eq(sitesTable.id, siteId)).returning()
+5. Invalidate Redis caches: DEL "site_detail:{siteId}", DEL "sites_list:{userId}"
+6. Return { success: true, site: updatedSite }
+
+FILE: src/modules/sites/sites.service.ts → updateSite(siteId, userId, data)</div>
+          <button class="copy-btn" onclick="copyPrompt('sites-4')">📋 Copy Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-sites-5">
+    <div class="api-top" onclick="tog('sites-5')">
+      <span class="method m-DELETE">DELETE</span>
+      <span class="api-path-text"><span class="seg-base">/sites/</span><span class="seg-param">:siteId</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Site aur uska saara linked data delete karo — cascade. Destructive action — UI pe confirm dialog zaroori hai.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Cascade Delete Order</div>
+          <div class="codeblock">1. Reminders WHERE siteId = :id
+2. SiteCompletion WHERE siteId = :id
+3. CastingDates WHERE siteId = :id
+4. SiteTasks WHERE siteId = :id
+5. Transactions WHERE siteId = :id
+6. Site itself</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div>
+      </div>
+      <div class="prompt-box" id="prompt-sites-5">
+        <div class="prompt-header" onclick="togPrompt('sites-5')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-sites-5">Build DELETE /api/v1/sites/:siteId — cascade delete site and all linked data. JWT protected.
+
+REQUIREMENTS:
+1. Verify ownership: SELECT id FROM sites WHERE id = siteId AND userId = req.user.userId. If not found → 404.
+2. Use Drizzle DB transaction for atomic cascade delete:
+   await db.transaction(async (tx) => {
+     await tx.delete(remindersTable).where(eq(remindersTable.siteId, siteId));
+     await tx.delete(siteCompletionTable).where(eq(siteCompletionTable.siteId, siteId));
+     await tx.delete(castingTable).where(eq(castingTable.siteId, siteId));
+     await tx.delete(tasksTable).where(eq(tasksTable.siteId, siteId));
+     await tx.delete(txTable).where(eq(txTable.siteId, siteId));
+     await tx.delete(sitesTable).where(eq(sitesTable.id, siteId));
+   });
+
+3. Invalidate Redis caches:
+   await redis.del(`site_detail:${siteId}`, `sites_list:${userId}`, `stats:${siteId}`, `dash:${userId}`);
+4. Return { success: true, message: "Site deleted successfully" }
+
+ALTERNATIVE: Enable PostgreSQL CASCADE on FK constraints in schema.ts — then only need to delete the site row.
+Drizzle: foreignKey({ columns: [tx.siteId], foreignColumns: [sites.id] }).onDelete('cascade')
+
+NOTE: Log deletion event for audit trail — INSERT into audit_log table or emit to analytics queue.</div>
+          <button class="copy-btn" onclick="copyPrompt('sites-5')">📋 Copy Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TRANSACTIONS ═══════════════════ -->
+<div class="module-block" id="transactions">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(245,158,11,0.1)">💰</div>
+    <div><div class="module-title">Transactions (Credit / Debit)</div><div class="module-path">/api/v1/transactions</div></div>
+    <div class="module-badge" style="background:rgba(245,158,11,0.1);color:#FCD34D;border:1px solid rgba(245,158,11,0.2)">6 APIs</div>
+  </div>
+  <div class="module-desc">App ka accounting core. Credit = paisa aaya. Debit = paisa gaya. Balance = SUM(credit) - SUM(debit), real-time calculate hota hai. 15+ material types, 11+ labour types, 4 payment modes.</div>
+
+  <div class="api-row" id="api-tx-1">
+    <div class="api-top" onclick="tog('tx-1')">
+      <span class="method m-GET">GET</span>
+      <span class="api-path-text"><span class="seg-base">/transactions/site/</span><span class="seg-param">:siteId</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Site ki saari transactions — paginated, date-grouped, filterable.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Query Params</div>
+          <table class="param-table"><tr><th>Param</th><th>Type</th><th>Notes</th></tr>
+          <tr><td class="pname">page</td><td class="ptype">number</td><td class="pdesc">Default 1</td></tr>
+          <tr><td class="pname">limit</td><td class="ptype">number</td><td class="pdesc">Default 20, max 100</td></tr>
+          <tr><td class="pname">type</td><td class="ptype">credit|debit</td><td class="pdesc">Filter</td></tr>
+          <tr><td class="pname">category</td><td class="ptype">material|labour</td><td class="pdesc">Debit category</td></tr>
+          <tr><td class="pname">from</td><td class="ptype">date</td><td class="pdesc">YYYY-MM-DD</td></tr>
+          <tr><td class="pname">to</td><td class="ptype">date</td><td class="pdesc">YYYY-MM-DD</td></tr>
+          </table>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"transactions"</span>: [{
+    <span class="ck2">"id"</span>, <span class="ck2">"type"</span>: <span class="cs">"debit"</span>, <span class="ck2">"category"</span>: <span class="cs">"material"</span>,
+    <span class="ck2">"subCategory"</span>: <span class="cs">"Steel"</span>, <span class="ck2">"amount"</span>: <span class="cn">85000</span>,
+    <span class="ck2">"paymentMode"</span>: <span class="cs">"bank"</span>, <span class="ck2">"date"</span>: <span class="cs">"2026-03-10"</span>
+  }],
+  <span class="ck2">"pagination"</span>: { <span class="ck2">"total"</span>: <span class="cn">87</span>, <span class="ck2">"page"</span>: <span class="cn">1</span>, <span class="ck2">"totalPages"</span>: <span class="cn">5</span> }
+}</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s401">401</span><span class="sc s404">404 Site not found</span></div></div>
+      </div>
+      <div class="prompt-box" id="prompt-tx-1">
+        <div class="prompt-header" onclick="togPrompt('tx-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-tx-1">Build GET /api/v1/transactions/site/:siteId — paginated, filtered transaction list.
+
+REQUIREMENTS:
+1. Verify site ownership: SELECT id FROM sites WHERE id = siteId AND userId = req.user.userId
+2. Parse & validate query params (zod):
+   page = parseInt(page) || 1, limit = Math.min(parseInt(limit) || 20, 100)
+   type in ['credit','debit'] | undefined
+   category in ['material','labour'] | undefined
+   from, to → parse as Date
+
+3. Build Drizzle WHERE conditions dynamically:
+   const conditions = [eq(txTable.siteId, siteId)];
+   if (type) conditions.push(eq(txTable.type, type));
+   if (category) conditions.push(eq(txTable.category, category));
+   if (from) conditions.push(gte(txTable.date, from));
+   if (to) conditions.push(lte(txTable.date, to));
+
+4. Count query for pagination:
+   const [{ count }] = await db.select({ count: sql<number>`COUNT(*)` })
+     .from(txTable).where(and(...conditions));
+
+5. Data query with pagination:
+   const transactions = await db.select().from(txTable)
+     .where(and(...conditions))
+     .orderBy(desc(txTable.date), desc(txTable.createdAt))
+     .limit(limit).offset((page - 1) * limit);
+
+6. Return { transactions, pagination: { total: count, page, totalPages: Math.ceil(count/limit) } }
+
+USE READ REPLICA for both queries. No caching needed here (filtered + paginated data too dynamic).
+FILE: src/modules/transactions/tx.service.ts → getSiteTransactions(siteId, userId, filters)</div>
+          <button class="copy-btn" onclick="copyPrompt('tx-1')">📋 Copy Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-tx-2">
+    <div class="api-top" onclick="tog('tx-2')">
+      <span class="method m-POST">POST</span>
+      <span class="api-path-text"><span class="seg-base">/transactions</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Nayi transaction add karo — add-entry.tsx screen se. Balance automatically recalculate hota hai.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Request Body</div>
+          <table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th><th>Notes</th></tr>
+          <tr><td class="pname">siteId</td><td class="ptype">string</td><td class="preq r">required</td><td class="pdesc">Must belong to user</td></tr>
+          <tr><td class="pname">type</td><td class="ptype">credit|debit</td><td class="preq r">required</td><td></td></tr>
+          <tr><td class="pname">amount</td><td class="ptype">number</td><td class="preq r">required</td><td class="pdesc">Positive number</td></tr>
+          <tr><td class="pname">category</td><td class="ptype">material|labour</td><td class="preq o">optional</td><td class="pdesc">For debit only</td></tr>
+          <tr><td class="pname">subCategory</td><td class="ptype">string</td><td class="preq o">optional</td><td class="pdesc">Steel, Cement, Mason...</td></tr>
+          <tr><td class="pname">paymentMode</td><td class="ptype">cash|bank|cheque|upi</td><td class="preq r">required</td><td></td></tr>
+          <tr><td class="pname">date</td><td class="ptype">date</td><td class="preq r">required</td><td class="pdesc">YYYY-MM-DD</td></tr>
+          <tr><td class="pname">note</td><td class="ptype">string</td><td class="preq o">optional</td><td class="pdesc">Max 200 chars</td></tr>
+          </table>
+        </div>
+        <div class="dbox"><div class="dlabel">Sub-Categories</div>
+          <div class="codeblock"><span class="ck">Material:</span> Steel, Cement, Bricks, Sand,
+  Aggregate, Paint, Binding Wire, Tiles,
+  Plumbing, Electrical, Wood, Glass,
+  Backfilling, Fascia Cladding, Hardware
+
+<span class="ck">Labour:</span> Paint, Tiles, False Ceiling,
+  Plumbing, Electrical, Mason, Carpenter,
+  Steel Binding, Casting, Shuttering,
+  Fabrication, Other</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400</span><span class="sc s404">404 Site not found</span></div></div>
+      </div>
+      <div class="prompt-box" id="prompt-tx-2">
+        <div class="prompt-header" onclick="togPrompt('tx-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div>
+        <div class="prompt-content">
+          <div class="prompt-text" id="prompt-text-tx-2">Build POST /api/v1/transactions — create new transaction. JWT protected.
+
+REQUIREMENTS:
+1. Zod validation schema:
+   z.object({
+     siteId: z.string().uuid(),
+     type: z.enum(['credit','debit']),
+     amount: z.number().positive().max(100000000),
+     category: z.enum(['material','labour']).optional(),
+     subCategory: z.string().max(50).optional(),
+     paymentMode: z.enum(['cash','bank','cheque','upi']),
+     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+     note: z.string().max(200).optional(),
+   })
+   .refine(data => data.type === 'credit' || data.category !== undefined, 
+     { message: "category required for debit", path: ["category"] })
+
+2. Verify siteId belongs to req.user.userId — 404 if not
+
+3. Insert transaction:
+   const [tx] = await db.insert(txTable).values({
+     id: crypto.randomUUID(), siteId, type, amount, category, subCategory,
+     paymentMode, date: new Date(date), note, createdAt: new Date()
+   }).returning();
+
+4. Invalidate caches: DEL "stats:{siteId}", "site_detail:{siteId}", "sites_list:{userId}", "dash:{userId}"
+5. Return 201 { success: true, transaction: tx }
+
+IMPORTANT: amount field — store as integer paise (multiply by 100) or use PostgreSQL DECIMAL(15,2).
+Drizzle: decimal('amount', { precision: 15, scale: 2 })
+FILE: src/modules/transactions/tx.service.ts → createTransaction(userId, data)</div>
+          <button class="copy-btn" onclick="copyPrompt('tx-2')">📋 Copy Prompt</button>
+        </div>
+      </div>
+      <div class="scale-box" id="scale-tx-2">
+        <div class="scale-header" onclick="togScale('tx-2')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Write path optimization</span><span class="scale-chevron">▼</span></div>
+        <div class="scale-content">
+          <div class="scale-grid">
+            <div class="scale-card">
+              <div class="scale-card-title">CACHE INVALIDATION</div>
+              <div class="scale-item">Every transaction write must invalidate 4 cache keys. Use <b>Redis pipeline</b> for atomic multi-DEL.</div>
+              <div class="scale-item"><code>await redis.pipeline().del(key1).del(key2).del(key3).del(key4).exec()</code></div>
+            </div>
+            <div class="scale-card">
+              <div class="scale-card-title">DECIMAL PRECISION</div>
+              <div class="scale-item"><b>Never use JavaScript float</b> for money. Store as PostgreSQL <code>DECIMAL(15,2)</code></div>
+              <div class="scale-item">Or store as integer paise (₹850.50 → 85050) and divide on read — safer for arithmetic</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-tx-3"><div class="api-top" onclick="tog('tx-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/transactions/</span><span class="seg-param">:txId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Transaction edit karo — amount, note, date, category update possible.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-tx-3"><div class="prompt-header" onclick="togPrompt('tx-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-tx-3">Build PUT /api/v1/transactions/:txId — update transaction. JWT protected.
+
+REQUIREMENTS:
+1. Fetch transaction: SELECT tx.*, sites.userId FROM transactions tx JOIN sites ON sites.id = tx.siteId WHERE tx.id = txId
+2. Verify sites.userId === req.user.userId → else 404
+3. Zod partial validation (all fields optional): amount, category, subCategory, paymentMode, date, note
+4. Drizzle update with only provided fields
+5. Invalidate: DEL "stats:{tx.siteId}", "site_detail:{tx.siteId}", "sites_list:{userId}", "dash:{userId}"
+6. Return { success: true, transaction: updated }
+
+FILE: src/modules/transactions/tx.service.ts → updateTransaction(txId, userId, data)</div><button class="copy-btn" onclick="copyPrompt('tx-3')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-tx-4"><div class="api-top" onclick="tog('tx-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/transactions/</span><span class="seg-param">:txId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Transaction delete karo. Balance automatically recalculates.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-tx-4"><div class="prompt-header" onclick="togPrompt('tx-4')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-tx-4">Build DELETE /api/v1/transactions/:txId — delete transaction. JWT protected.
+
+1. Fetch transaction + verify ownership via JOIN with sites table (same as PUT)
+2. DELETE FROM transactions WHERE id = txId
+3. Invalidate Redis: DEL "stats:{siteId}", "site_detail:{siteId}", "sites_list:{userId}", "dash:{userId}"
+4. Return { success: true }
+
+SOFT DELETE OPTION: Add deleted_at TIMESTAMP column. SET deleted_at = NOW() instead of hard delete.
+Add WHERE deleted_at IS NULL to all SELECT queries. Allows undo functionality in app.</div><button class="copy-btn" onclick="copyPrompt('tx-4')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-tx-5">
+    <div class="api-top" onclick="tog('tx-5')">
+      <span class="method m-GET">GET</span>
+      <span class="api-path-text"><span class="seg-base">/transactions/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/summary</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Site ka financial breakdown — material %, labour %, payment mode split, budget usage.</div>
+      <div class="detail-grid">
+        <div class="dbox full"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"totalCredit"</span>: <span class="cn">800000</span>, <span class="ck2">"totalDebit"</span>: <span class="cn">620000</span>, <span class="ck2">"balance"</span>: <span class="cn">180000</span>,
+  <span class="ck2">"materialTotal"</span>: <span class="cn">380000</span>, <span class="ck2">"labourTotal"</span>: <span class="cn">240000</span>,
+  <span class="ck2">"materialBreakdown"</span>: { <span class="cs">"Steel"</span>: <span class="cn">85000</span>, <span class="cs">"Cement"</span>: <span class="cn">62000</span> },
+  <span class="ck2">"paymentModes"</span>: { <span class="cs">"cash"</span>: <span class="cn">200000</span>, <span class="cs">"upi"</span>: <span class="cn">180000</span> },
+  <span class="ck2">"budgetUsedPercent"</span>: <span class="cn">41.3</span>
+}</div>
+        </div>
+      </div>
+      <div class="prompt-box" id="prompt-tx-5"><div class="prompt-header" onclick="togPrompt('tx-5')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-tx-5">Build GET /api/v1/transactions/site/:siteId/summary — financial breakdown for report screen.
+
+REQUIREMENTS:
+1. Verify ownership (siteId → userId match)
+2. Single SQL query with multiple aggregations:
+   SELECT 
+     SUM(CASE WHEN type='credit' THEN amount ELSE 0 END) as total_credit,
+     SUM(CASE WHEN type='debit' THEN amount ELSE 0 END) as total_debit,
+     SUM(CASE WHEN category='material' THEN amount ELSE 0 END) as material_total,
+     SUM(CASE WHEN category='labour' THEN amount ELSE 0 END) as labour_total,
+     SUM(CASE WHEN payment_mode='cash' THEN amount ELSE 0 END) as cash_total,
+     SUM(CASE WHEN payment_mode='bank' THEN amount ELSE 0 END) as bank_total,
+     SUM(CASE WHEN payment_mode='upi' THEN amount ELSE 0 END) as upi_total,
+     SUM(CASE WHEN payment_mode='cheque' THEN amount ELSE 0 END) as cheque_total
+   FROM transactions WHERE site_id = siteId AND type = 'debit'
+
+3. Second query for subCategory breakdown:
+   SELECT sub_category, SUM(amount) as total FROM transactions 
+   WHERE site_id = siteId AND type = 'debit' AND sub_category IS NOT NULL
+   GROUP BY sub_category ORDER BY total DESC
+
+4. Fetch budget from sites table (join or separate query)
+5. Assemble response, calculate percentages
+6. CACHE: "stats:{siteId}" TTL 30s, invalidate on transaction changes
+
+FILE: src/modules/transactions/tx.service.ts → getSiteSummary(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('tx-5')">📋 Copy Prompt</button></div></div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-tx-6"><div class="api-top" onclick="tog('tx-6')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/transactions/</span><span class="seg-param">:txId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Single transaction detail — edit screen ke liye pre-fill data.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-tx-6"><div class="prompt-header" onclick="togPrompt('tx-6')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-tx-6">Build GET /api/v1/transactions/:txId — get single transaction detail.
+
+1. SELECT tx.*, sites.name as site_name FROM transactions tx 
+   JOIN sites ON sites.id = tx.siteId 
+   WHERE tx.id = txId AND sites.userId = req.user.userId
+2. If not found → 404
+3. Return transaction object
+
+Simple endpoint, no caching needed. Fast single-row lookup by PK (UUID indexed).</div><button class="copy-btn" onclick="copyPrompt('tx-6')">📋 Copy Prompt</button></div></div></div></div>
+</div>
+
+<!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+<div class="module-block" id="dashboard">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(59,130,246,0.1)">📊</div>
+    <div><div class="module-title">Dashboard</div><div class="module-path">/api/v1/dashboard</div></div>
+    <div class="module-badge" style="background:rgba(59,130,246,0.1);color:#60A5FA;border:1px solid rgba(59,130,246,0.2)">3 APIs</div>
+  </div>
+  <div class="module-desc">Cross-site overview — aggregated totals across all user's sites. Green = profit (credit &gt; debit), Red = loss. Dashboard ka data heavily cached hai — 60 second TTL.</div>
+
+  <div class="api-row" id="api-dash-1">
+    <div class="api-top" onclick="tog('dash-1')">
+      <span class="method m-GET">GET</span>
+      <span class="api-path-text"><span class="seg-base">/dashboard</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Main dashboard — user ki saari sites ka total + individual site cards.</div>
+      <div class="detail-grid">
+        <div class="dbox full"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{
+  <span class="ck2">"summary"</span>: { <span class="ck2">"totalCredit"</span>: <span class="cn">4200000</span>, <span class="ck2">"totalDebit"</span>: <span class="cn">3100000</span>, <span class="ck2">"totalBalance"</span>: <span class="cn">1100000</span>, <span class="ck2">"totalSites"</span>: <span class="cn">6</span> },
+  <span class="ck2">"sites"</span>: [{ <span class="ck2">"id"</span>, <span class="ck2">"name"</span>, <span class="ck2">"credit"</span>: <span class="cn">800000</span>, <span class="ck2">"debit"</span>: <span class="cn">620000</span>, <span class="ck2">"balance"</span>: <span class="cn">180000</span>, <span class="ck2">"isProfit"</span>: <span class="cv">true</span> }]
+}</div>
+        </div>
+      </div>
+      <div class="prompt-box" id="prompt-dash-1"><div class="prompt-header" onclick="togPrompt('dash-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-dash-1">Build GET /api/v1/dashboard — main dashboard with all-sites financial aggregation.
+
+REQUIREMENTS:
+1. Check Redis cache first: GET "dash:{userId}" → if hit, return parsed JSON immediately
+
+2. If cache miss, single SQL query:
+   SELECT s.id, s.name, s.budget,
+     COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) as credit,
+     COALESCE(SUM(CASE WHEN t.type='debit' THEN t.amount ELSE 0 END), 0) as debit
+   FROM sites s
+   LEFT JOIN transactions t ON t.site_id = s.id
+   WHERE s.user_id = userId
+   GROUP BY s.id, s.name, s.budget
+   ORDER BY s.created_at DESC
+
+3. Process results:
+   - Per site: balance = credit - debit, isProfit = balance >= 0
+   - Summary: totalCredit = sum of all credits, totalDebit = sum of all debits
+   - totalBalance = totalCredit - totalDebit, totalSites = results.length
+
+4. Cache result: SET "dash:{userId}" JSON.stringify(response) EX 60
+
+5. Return { summary, sites }
+
+FILE: src/modules/dashboard/dashboard.service.ts → getDashboard(userId)
+USE READ REPLICA for the DB query.</div><button class="copy-btn" onclick="copyPrompt('dash-1')">📋 Copy Prompt</button></div></div>
+      <div class="scale-box" id="scale-dash-1"><div class="scale-header" onclick="togScale('dash-1')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Most-hit endpoint</span><span class="scale-chevron">▼</span></div><div class="scale-content"><div class="scale-grid"><div class="scale-card"><div class="scale-card-title">CACHING IS CRITICAL</div><div class="scale-item">Dashboard is app's home screen — hit on every app open. At 50K DAU → <b>~500K hits/day</b></div><div class="scale-item">Redis cache <code>dash:{userId}</code> TTL 60s — 99% of requests never touch DB</div><div class="scale-item">Invalidate only on transaction write — not on every login</div></div><div class="scale-card"><div class="scale-card-title">SINGLE QUERY PATTERN</div><div class="scale-item">One <b>GROUP BY query</b> across sites + transactions is far better than per-site queries in a loop</div><div class="scale-item">With proper index on <code>(site_id, type)</code> this runs in ~5ms even with 10M transactions</div></div></div></div></div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-dash-2"><div class="api-top" onclick="tog('dash-2')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/dashboard/monthly</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Last 6 months ka monthly credit/debit — chart data ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"monthly"</span>: [{ <span class="ck2">"month"</span>: <span class="cs">"Jan 2026"</span>, <span class="ck2">"credit"</span>: <span class="cn">350000</span>, <span class="ck2">"debit"</span>: <span class="cn">280000</span> }] }</div></div></div><div class="prompt-box" id="prompt-dash-2"><div class="prompt-header" onclick="togPrompt('dash-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-dash-2">Build GET /api/v1/dashboard/monthly — last 6 months credit/debit for chart.
+
+SQL query using DATE_TRUNC:
+  SELECT 
+    TO_CHAR(DATE_TRUNC('month', t.date), 'Mon YYYY') as month,
+    DATE_TRUNC('month', t.date) as month_date,
+    SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END) as credit,
+    SUM(CASE WHEN t.type='debit' THEN t.amount ELSE 0 END) as debit
+  FROM transactions t
+  JOIN sites s ON s.id = t.site_id
+  WHERE s.user_id = userId 
+    AND t.date >= NOW() - INTERVAL '6 months'
+  GROUP BY DATE_TRUNC('month', t.date)
+  ORDER BY month_date ASC
+
+Fill missing months with 0 in JS (user may have no transactions in some months).
+Cache: "monthly:{userId}" TTL 3600 (1 hour — changes infrequently)
+Return { monthly: [{ month, credit, debit }] }</div><button class="copy-btn" onclick="copyPrompt('dash-2')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-dash-3"><div class="api-top" onclick="tog('dash-3')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/dashboard/reminders-today</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Aaj aur aane wale 2 din ke reminders — dashboard notification bar ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span></div></div></div><div class="prompt-box" id="prompt-dash-3"><div class="prompt-header" onclick="togPrompt('dash-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-dash-3">Build GET /api/v1/dashboard/reminders-today — upcoming reminders for dashboard.
+
+SELECT r.*, s.name as site_name FROM reminders r
+LEFT JOIN sites s ON s.id = r.site_id
+WHERE r.user_id = userId 
+  AND r.date >= NOW()::date 
+  AND r.date < (NOW() + INTERVAL '3 days')::date
+ORDER BY r.date ASC
+LIMIT 10
+
+Return { reminders: [...], count: n }
+No caching — reminders must be real-time accurate for notification display.</div><button class="copy-btn" onclick="copyPrompt('dash-3')">📋 Copy Prompt</button></div></div></div></div>
+</div>
+
+<!-- ═══════════════════ COMPLETION ═══════════════════ -->
+<div class="module-block" id="completion">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(16,185,129,0.1)">✅</div>
+    <div><div class="module-title">House Completion Tracker</div><div class="module-path">/api/v1/completion</div></div>
+    <div class="module-badge" style="background:rgba(16,185,129,0.1);color:#34D399;border:1px solid rgba(16,185,129,0.2)">4 APIs</div>
+  </div>
+  <div class="module-desc">12-stage construction checklist. completionPercent = (done/12) × 100. SiteCompletion = 1 row per site, completedStages = String[] array in PostgreSQL.</div>
+
+  <div class="api-row" id="api-comp-1"><div class="api-top" onclick="tog('comp-1')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">12 stages ka current status — done/pending.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"completedStages"</span>: [<span class="cs">"foundation"</span>, <span class="cs">"slab_casting"</span>], <span class="ck2">"completionPercent"</span>: <span class="cn">25.0</span>, <span class="ck2">"allStages"</span>: [{ <span class="ck2">"key"</span>: <span class="cs">"foundation"</span>, <span class="ck2">"label"</span>: <span class="cs">"Foundation Work"</span>, <span class="ck2">"done"</span>: <span class="cv">true</span> }, <span class="cc">...12 total</span>] }</div></div></div><div class="prompt-box" id="prompt-comp-1"><div class="prompt-header" onclick="togPrompt('comp-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-comp-1">Build GET /api/v1/completion/:siteId — get 12-stage completion status.
+
+const ALL_STAGES = [
+  { key: 'foundation', label: 'Foundation Work' },
+  { key: 'slab_casting', label: 'Slab Casting' },
+  { key: 'brick_work', label: 'Brick Work' },
+  { key: 'plaster', label: 'Plaster Work' },
+  { key: 'plumbing_rough', label: 'Plumbing Rough-in' },
+  { key: 'electrical_rough', label: 'Electrical Rough-in' },
+  { key: 'flooring', label: 'Flooring' },
+  { key: 'door_window', label: 'Door & Window Fitting' },
+  { key: 'painting', label: 'Painting' },
+  { key: 'final_plumbing', label: 'Final Plumbing' },
+  { key: 'final_electrical', label: 'Final Electrical' },
+  { key: 'fabrication', label: 'Fabrication Work' },
+];
+
+1. Verify siteId ownership
+2. SELECT completed_stages FROM site_completion WHERE site_id = siteId
+3. Map ALL_STAGES → add done: completedStages.includes(stage.key)
+4. completionPercent = (completedStages.length / 12) * 100
+5. Return { completedStages, allStages, completionPercent }
+
+FILE: src/modules/completion/completion.service.ts</div><button class="copy-btn" onclick="copyPrompt('comp-1')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-comp-2"><div class="api-top" onclick="tog('comp-2')"><span class="method m-PATCH">PATCH</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/toggle</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Stage toggle karo — already done → remove, nahi → add. toggleCompletionStage() logic.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">stage</td><td class="ptype">string (stage key)</td><td class="preq r">required</td></tr></table></div><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"completedStages"</span>: [<span class="cc">...updated</span>], <span class="ck2">"completionPercent"</span>: <span class="cn">33.3</span> }</div></div></div><div class="prompt-box" id="prompt-comp-2"><div class="prompt-header" onclick="togPrompt('comp-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-comp-2">Build PATCH /api/v1/completion/:siteId/toggle — toggle a construction stage.
+
+REQUIREMENTS:
+1. Validate { stage: z.enum(['foundation','slab_casting','brick_work','plaster','plumbing_rough','electrical_rough','flooring','door_window','painting','final_plumbing','final_electrical','fabrication']) }
+2. Fetch current: SELECT completed_stages FROM site_completion WHERE site_id = siteId
+3. Toggle logic:
+   const isAlreadyDone = completedStages.includes(stage);
+   const newStages = isAlreadyDone
+     ? completedStages.filter(s => s !== stage)
+     : [...completedStages, stage];
+4. Update: db.update(siteCompletionTable).set({ completedStages: newStages }).where(eq(...siteId))
+5. Invalidate: DEL "site_detail:{siteId}"
+6. Return { completedStages: newStages, completionPercent: (newStages.length / 12) * 100 }
+
+POSTGRESQL ARRAY: Use text[] column type in Drizzle:
+  completedStages: text('completed_stages').array().default([])
+Toggle using array operations in SQL directly (optional, more efficient):
+  UPDATE site_completion SET completed_stages = 
+    CASE WHEN $stage = ANY(completed_stages) 
+    THEN array_remove(completed_stages, $stage)
+    ELSE array_append(completed_stages, $stage) END
+  WHERE site_id = $siteId</div><button class="copy-btn" onclick="copyPrompt('comp-2')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-comp-3"><div class="api-top" onclick="tog('comp-3')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/initialize</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Site create hone pe auto-call — empty SiteCompletion row banao. Direct user call rarely needed.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s409">409 Already exists</span></div></div></div></div></div>
+  <div class="api-row" id="api-comp-4"><div class="api-top" onclick="tog('comp-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/reset</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Saari stages reset karo — completedStages = []. Confirm dialog zaroori.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+</div>
+
+<!-- ═══════════════════ CASTING ═══════════════════ -->
+<div class="module-block" id="casting">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(6,182,212,0.1)">🧱</div>
+    <div><div class="module-title">Casting Dates</div><div class="module-path">/api/v1/casting</div></div>
+    <div class="module-badge" style="background:rgba(6,182,212,0.1);color:#22D3EE;border:1px solid rgba(6,182,212,0.2)">5 APIs</div>
+  </div>
+  <div class="module-desc">Concrete casting ke dates track karo — foundation, plinth beam, column, slab, granite slab. Contractor ke liye critical — curing timeline calculate hoti hai (28 day standard).</div>
+
+  <div class="api-row" id="api-cast-1"><div class="api-top" onclick="tog('cast-1')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/casting/site/</span><span class="seg-param">:siteId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Site ke saare casting records with curing timeline.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"castings"</span>: [{ <span class="ck2">"id"</span>, <span class="ck2">"castingType"</span>: <span class="cs">"slab"</span>, <span class="ck2">"date"</span>: <span class="cs">"2026-01-10"</span>, <span class="ck2">"endDate"</span>: <span class="cs">"2026-01-11"</span>, <span class="ck2">"note"</span>: <span class="cs">"Ground floor slab"</span>, <span class="ck2">"curingDays"</span>: <span class="cn">28</span> }] }</div></div></div><div class="prompt-box" id="prompt-cast-1"><div class="prompt-header" onclick="togPrompt('cast-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-cast-1">Build GET /api/v1/casting/site/:siteId — get all casting dates for a site.
+
+1. Verify siteId ownership
+2. SELECT * FROM casting_dates WHERE site_id = siteId ORDER BY date DESC
+3. For each record, calculate:
+   curingDays = 28 (standard concrete curing)
+   curingDeadline = addDays(endDate || date, 28) 
+   isCuringComplete = curingDeadline < new Date()
+4. Return { castings: [...enriched records] }
+
+CASTING TYPES ENUM: foundation | plinth_beam | column | slab | granite_slab
+Store as text column with application-level validation (easier to extend later).
+FILE: src/modules/casting/casting.service.ts</div><button class="copy-btn" onclick="copyPrompt('cast-1')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-cast-2"><div class="api-top" onclick="tog('cast-2')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/casting</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Nayi casting event add karo.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">siteId</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">castingType</td><td class="ptype">foundation|plinth_beam|column|slab|granite_slab</td><td class="preq r">required</td></tr><tr><td class="pname">date</td><td class="ptype">date</td><td class="preq r">required</td></tr><tr><td class="pname">endDate</td><td class="ptype">date</td><td class="preq o">optional</td></tr><tr><td class="pname">note</td><td class="ptype">string</td><td class="preq o">optional</td></tr></table></div><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-cast-2"><div class="prompt-header" onclick="togPrompt('cast-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-cast-2">Build POST /api/v1/casting — create casting date record.
+
+1. Zod: { siteId: uuid, castingType: z.enum([...5 types]), date: dateString, endDate: dateString.optional(), note: z.string().max(300).optional() }
+2. Verify siteId ownership
+3. Validate: date must not be in the future by more than 1 year; endDate >= date if provided
+4. Insert into casting_dates table
+5. Invalidate "site_detail:{siteId}" cache
+6. Return 201 { casting: newRecord }
+
+FILE: src/modules/casting/casting.service.ts → createCasting(userId, data)</div><button class="copy-btn" onclick="copyPrompt('cast-2')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-cast-3"><div class="api-top" onclick="tog('cast-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Casting record update karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-cast-4"><div class="api-top" onclick="tog('cast-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Casting record delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-cast-5"><div class="api-top" onclick="tog('cast-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Single casting record — edit form pre-fill.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+</div>
+
+<!-- ═══════════════════ ACTIVITIES ═══════════════════ -->
+<div class="module-block" id="activities">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(168,85,247,0.1)">⏱️</div>
+    <div><div class="module-title">Construction Activities (Task Timer)</div><div class="module-path">/api/v1/activities</div></div>
+    <div class="module-badge" style="background:rgba(168,85,247,0.1);color:#C084FC;border:1px solid rgba(168,85,247,0.2)">6 APIs</div>
+  </div>
+  <div class="module-desc">Real-time task tracker. Start/Pause/Resume/End. Server-side time tracking — client clock pe depend nahi. getTaskActiveTime() = endTime - startTime - pausedDuration.</div>
+  <div class="conn-map">
+    <span class="conn-label">STATUS FLOW →</span>
+    <span class="conn-chip">pending</span><span style="color:var(--muted2);font-size:11px">→</span><span class="conn-chip primary">running</span><span style="color:var(--muted2);font-size:11px">⇄</span><span class="conn-chip">paused</span><span style="color:var(--muted2);font-size:11px">→</span><span class="conn-chip primary">done</span>
+  </div>
+
+  <div class="api-row" id="api-act-1"><div class="api-top" onclick="tog('act-1')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/activities/site/</span><span class="seg-param">:siteId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Site ki saari activities — active task top pe, rest category-grouped.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"activeTask"</span>: { <span class="ck2">"id"</span>, <span class="ck2">"name"</span>: <span class="cs">"Shuttering"</span>, <span class="ck2">"status"</span>: <span class="cs">"running"</span>, <span class="ck2">"elapsedSeconds"</span>: <span class="cn">7200</span> }, <span class="ck2">"categories"</span>: [{ <span class="ck2">"name"</span>: <span class="cs">"Shuttering"</span>, <span class="ck2">"tasks"</span>: [{ <span class="ck2">"status"</span>: <span class="cs">"done"</span>, <span class="ck2">"activeSeconds"</span>: <span class="cn">28800</span> }] }] }</div></div></div><div class="prompt-box" id="prompt-act-1"><div class="prompt-header" onclick="togPrompt('act-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-act-1">Build GET /api/v1/activities/site/:siteId — get all site activities with active task.
+
+1. Verify siteId ownership
+2. SELECT * FROM site_tasks WHERE site_id = siteId ORDER BY created_at DESC
+3. Calculate elapsedSeconds for each task:
+   function calcActiveSeconds(task) {
+     if (!task.startTime) return 0;
+     const end = task.endTime || new Date();
+     const total = (end - task.startTime) / 1000;
+     return Math.max(0, total - task.pausedDuration);
+   }
+4. Find activeTask: tasks.find(t => t.status === 'running' || t.status === 'paused')
+5. Group remaining by category:
+   const categories = groupBy(tasks, 'category') → [{name, tasks}]
+6. Return { activeTask: activeTask || null, categories }
+
+FILE: src/modules/activities/activities.service.ts → getSiteActivities(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('act-1')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-act-2"><div class="api-top" onclick="tog('act-2')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/activities</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Nayi activity create karo — status: pending se start.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">siteId</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">name</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">category</td><td class="ptype">string</td><td class="preq r">required</td></tr></table></div><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400</span></div></div></div><div class="prompt-box" id="prompt-act-2"><div class="prompt-header" onclick="togPrompt('act-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-act-2">Build POST /api/v1/activities — create activity task.
+
+1. Zod: { siteId: uuid, name: z.string().min(2).max(100), category: z.string().min(2).max(50) }
+2. Verify ownership. Insert with status='pending', startTime=null, pausedDuration=0
+3. Return 201 { task: newTask }
+Categories suggestion list (not enforced, free text): Excavation, Foundation, Shuttering, Steel Binding, Casting, Brickwork, Plaster, Plumbing, Electrical, Tiling, Painting, Finishing</div><button class="copy-btn" onclick="copyPrompt('act-2')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-act-3">
+    <div class="api-top" onclick="tog('act-3')">
+      <span class="method m-PATCH">PATCH</span>
+      <span class="api-path-text"><span class="seg-base">/activities/</span><span class="seg-param">:taskId</span><span class="seg-base">/action</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">Timer actions — START, PAUSE, RESUME, END. Server-side time tracking.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">action</td><td class="ptype">START|PAUSE|RESUME|END</td><td class="preq r">required</td></tr></table></div>
+        <div class="dbox"><div class="dlabel">Server Logic</div>
+          <div class="codeblock"><span class="ck">START:</span>  startTime = NOW(), status = running
+<span class="ck">PAUSE:</span>  status = paused
+         <span class="cc">// pauseStartedAt in Redis TTL=24h</span>
+<span class="ck">RESUME:</span> pausedDuration += NOW() - pauseStartedAt
+         status = running
+<span class="ck">END:</span>    endTime = NOW(), status = done
+         activeTime = endTime-startTime-pausedDuration</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"status"</span>: <span class="cs">"paused"</span>, <span class="ck2">"activeSeconds"</span>: <span class="cn">7200</span> }</div></div>
+      </div>
+      <div class="rel-note">🔗 <b>Business rule:</b> Only 1 task running per site at a time. START → check no other running task exists.</div>
+      <div class="prompt-box" id="prompt-act-3"><div class="prompt-header" onclick="togPrompt('act-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-act-3">Build PATCH /api/v1/activities/:taskId/action — timer action handler.
+
+REQUIREMENTS:
+1. Fetch task + verify ownership via JOIN with sites
+2. Validate action = z.enum(['START','PAUSE','RESUME','END'])
+3. State machine validation:
+   START:  task.status must be 'pending' → else 400 "Already started"
+   PAUSE:  task.status must be 'running' → else 400 "Task not running"
+   RESUME: task.status must be 'paused'  → else 400 "Task not paused"
+   END:    task.status must be 'running' or 'paused' → else 400
+
+4. Action handlers:
+   START:
+     Check: SELECT id FROM site_tasks WHERE site_id = task.siteId AND status = 'running' LIMIT 1
+     If found → 400 { error: "Another task is already running for this site" }
+     Update: { status: 'running', startTime: new Date() }
+   
+   PAUSE:
+     Store pause time in Redis: SET "pause_start:{taskId}" Date.now() EX 86400
+     Update DB: { status: 'paused' }
+   
+   RESUME:
+     Get pause start from Redis: GET "pause_start:{taskId}"
+     pauseMs = Date.now() - parseInt(pauseStartMs)
+     Update: { status: 'running', pausedDuration: task.pausedDuration + Math.floor(pauseMs/1000) }
+     DEL "pause_start:{taskId}"
+   
+   END:
+     If status was 'paused' → first add remaining pause duration
+     Update: { status: 'done', endTime: new Date() }
+     Calculate final activeSeconds
+
+5. Return { status: newStatus, activeSeconds }
+
+FILE: src/modules/activities/activities.service.ts → handleTaskAction(taskId, userId, action)</div><button class="copy-btn" onclick="copyPrompt('act-3')">📋 Copy Prompt</button></div></div>
+      <div class="scale-box" id="scale-act-3"><div class="scale-header" onclick="togScale('act-3')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Timer state consistency</span><span class="scale-chevron">▼</span></div><div class="scale-content"><div class="scale-grid"><div class="scale-card"><div class="scale-card-title">STATE MACHINE INTEGRITY</div><div class="scale-item"><b>Race condition:</b> Two simultaneous START requests for same site. Use <b>DB-level unique constraint</b> or Redis distributed lock: <code>SET lock:task:{siteId} 1 EX 5 NX</code></div><div class="scale-item">Single-activity-per-site rule enforced at DB level, not just app level</div></div><div class="scale-card"><div class="scale-card-title">REDIS FOR PAUSE STATE</div><div class="scale-item">Pause start time stored in Redis (not DB) — frequently updated, fast read/write needed</div><div class="scale-item">TTL 24h — if app crashes, pause state doesn't persist forever, task auto-expires</div></div></div></div></div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-act-4"><div class="api-top" onclick="tog('act-4')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/activities/</span><span class="seg-param">:taskId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Activity name ya category update karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-act-5"><div class="api-top" onclick="tog('act-5')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/activities/</span><span class="seg-param">:taskId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Activity delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-act-6"><div class="api-top" onclick="tog('act-6')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/activities/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/timeline</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Completed activities chronological — report screen timeline. Duration human-readable ("8h 30m").</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"timeline"</span>: [{ <span class="ck2">"name"</span>: <span class="cs">"Foundation Shuttering"</span>, <span class="ck2">"category"</span>: <span class="cs">"Shuttering"</span>, <span class="ck2">"startTime"</span>: <span class="cs">"..."</span>, <span class="ck2">"endTime"</span>: <span class="cs">"..."</span>, <span class="ck2">"duration"</span>: <span class="cs">"8h 30m"</span> }] }</div></div></div><div class="prompt-box" id="prompt-act-6"><div class="prompt-header" onclick="togPrompt('act-6')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-act-6">Build GET /api/v1/activities/site/:siteId/timeline — completed tasks in chronological order.
+
+1. SELECT * FROM site_tasks WHERE site_id = siteId AND status = 'done' ORDER BY start_time ASC
+2. Format duration:
+   function formatDuration(seconds) {
+     const h = Math.floor(seconds / 3600);
+     const m = Math.floor((seconds % 3600) / 60);
+     if (h > 0) return `${h}h ${m}m`;
+     return `${m}m`;
+   }
+3. Return { timeline: tasks.map(t => ({ ...t, duration: formatDuration(calcActiveSeconds(t)) })) }
+
+This endpoint is used in reports — no caching needed (called infrequently).</div><button class="copy-btn" onclick="copyPrompt('act-6')">📋 Copy Prompt</button></div></div></div></div>
+</div>
+
+<!-- ═══════════════════ REPORTS ═══════════════════ -->
+<div class="module-block" id="reports">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(16,185,129,0.1)">📄</div>
+    <div><div class="module-title">Reports & PDF Export</div><div class="module-path">/api/v1/reports</div></div>
+    <div class="module-badge" style="background:rgba(16,185,129,0.1);color:#34D399;border:1px solid rgba(16,185,129,0.2)">5 APIs</div>
+  </div>
+  <div class="module-desc">Saara site data ek jagah. generateSiteReportHTML() → Puppeteer → PDF → S3 → presigned URL. Heavy operation — async via Bull Queue.</div>
+  <div class="conn-map"><span class="conn-label">PULLS FROM →</span><span class="conn-chip primary">Transaction (summary)</span><span class="conn-chip primary">SiteCompletion</span><span class="conn-chip primary">CastingDate</span><span class="conn-chip primary">SiteTask (timeline)</span></div>
+
+  <div class="api-row" id="api-rep-1"><div class="api-top" onclick="tog('rep-1')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Complete report data — single API call mein sab. Report screen render ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{
+  <span class="ck2">"site"</span>: { <span class="cc">...info</span> },
+  <span class="ck2">"financialSummary"</span>: { <span class="ck2">"totalCredit"</span>, <span class="ck2">"totalDebit"</span>, <span class="ck2">"materialBreakdown"</span>, <span class="ck2">"labourBreakdown"</span> },
+  <span class="ck2">"completionCard"</span>: { <span class="ck2">"percent"</span>: <span class="cn">58.3</span>, <span class="ck2">"stages"</span>: [<span class="cc">...12</span>] },
+  <span class="ck2">"castingDates"</span>: [<span class="cc">...</span>],
+  <span class="ck2">"activitiesTimeline"</span>: [<span class="cc">...</span>],
+  <span class="ck2">"allTransactions"</span>: [<span class="cc">// date-grouped</span>]
+}</div></div></div><div class="prompt-box" id="prompt-rep-1"><div class="prompt-header" onclick="togPrompt('rep-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-rep-1">Build GET /api/v1/reports/site/:siteId — full report data aggregation endpoint.
+
+REQUIREMENTS:
+1. Verify siteId ownership
+2. Fetch all data in parallel (Promise.all):
+   const [site, txSummary, completion, castings, timeline, allTx] = await Promise.all([
+     getSiteById(siteId),
+     getSiteSummary(siteId, userId),      // reuse from transactions module
+     getCompletion(siteId, userId),        // reuse from completion module
+     getCastings(siteId, userId),          // reuse from casting module
+     getActivitiesTimeline(siteId, userId),// reuse from activities module
+     db.select().from(txTable).where(eq(txTable.siteId, siteId)).orderBy(desc(txTable.date))
+   ]);
+
+3. Group allTransactions by date:
+   const grouped = groupBy(allTx, tx => tx.date.toISOString().split('T')[0])
+   const dateGrouped = Object.entries(grouped).map(([date, txs]) => ({ date, transactions: txs }))
+
+4. Assemble and return complete report object
+
+PATTERN: Report service calls other services' internal functions (not via HTTP).
+This is the benefit of monolith — direct function calls, no network overhead.
+FILE: src/modules/reports/reports.service.ts → getFullReport(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('rep-1')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-rep-2">
+    <div class="api-top" onclick="tog('rep-2')">
+      <span class="method m-GET">GET</span>
+      <span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/pdf</span></span>
+      <div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="api-detail">
+      <div class="detail-desc">PDF generate karo → S3 upload → presigned URL return karo. Heavy job — Bull Queue via async worker.</div>
+      <div class="detail-grid">
+        <div class="dbox"><div class="dlabel">PDF Generation Flow</div>
+          <div class="codeblock">1. Check S3: existing PDF < 1hr old? → return cached URL
+2. Else: enqueue Bull job { siteId, userId }
+3. Worker picks up → getFullReport() → generateHTML() → 
+   Puppeteer: HTML → PDF → S3 upload
+4. Polling or WebSocket for job completion
+5. Return presigned URL (1hr expiry)</div>
+        </div>
+        <div class="dbox"><div class="dlabel">Response 200</div>
+          <div class="codeblock">{ <span class="ck2">"pdfUrl"</span>: <span class="cs">"https://s3.../report.pdf"</span>, <span class="ck2">"expiresIn"</span>: <span class="cn">3600</span> }</div>
+        </div>
+      </div>
+      <div class="prompt-box" id="prompt-rep-2"><div class="prompt-header" onclick="togPrompt('rep-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-rep-2">Build GET /api/v1/reports/site/:siteId/pdf — async PDF generation via Bull Queue.
+
+ARCHITECTURE:
+- Main API process: validates, checks cache, enqueues job, returns jobId
+- Worker process (pdfWorker.ts): processes job, generates PDF, uploads to S3
+- Poll endpoint: GET /reports/site/:siteId/pdf/status/:jobId
+
+STEP 1 — Main route handler:
+  const cacheKey = `pdf_url:${siteId}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) return res.json({ pdfUrl: cached, expiresIn: 3600, cached: true });
+  
+  const job = await pdfQueue.add('generate-pdf', { siteId, userId: req.user.userId });
+  return res.json({ jobId: job.id, status: 'queued', pollUrl: `/reports/site/${siteId}/pdf/status/${job.id}` });
+
+STEP 2 — Worker (src/jobs/pdfWorker.ts):
+  pdfQueue.process('generate-pdf', async (job) => {
+    const { siteId, userId } = job.data;
+    const reportData = await reportsService.getFullReport(siteId, userId);
+    const html = generateSiteReportHTML(reportData);
+    
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+    await browser.close();
+    
+    const s3Key = `reports/${siteId}/${Date.now()}.pdf`;
+    await s3.upload({ Bucket: S3_BUCKET, Key: s3Key, Body: pdfBuffer, ContentType: 'application/pdf' }).promise();
+    
+    const url = await s3.getSignedUrlPromise('getObject', { Bucket: S3_BUCKET, Key: s3Key, Expires: 3600 });
+    await redis.set(`pdf_url:${siteId}`, url, 'EX', 3500);
+    return { pdfUrl: url };
+  });
+
+STEP 3 — Poll endpoint:
+  GET /reports/site/:siteId/pdf/status/:jobId
+  const job = await pdfQueue.getJob(jobId);
+  const state = await job.getState(); // queued, active, completed, failed
+  if (state === 'completed') return { status: 'done', pdfUrl: job.returnvalue.pdfUrl }
+  return { status: state }
+
+FILE: src/modules/reports/reports.router.ts + src/jobs/pdfWorker.ts</div><button class="copy-btn" onclick="copyPrompt('rep-2')">📋 Copy Prompt</button></div></div>
+      <div class="scale-box" id="scale-rep-2"><div class="scale-header" onclick="togScale('rep-2')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Async heavy job pattern</span><span class="scale-chevron">▼</span></div><div class="scale-content"><div class="scale-grid"><div class="scale-card"><div class="scale-card-title">WHY BULL QUEUE?</div><div class="scale-item">Puppeteer PDF generation takes <b>3-10 seconds</b>. Synchronous response would timeout mobile clients.</div><div class="scale-item">Bull Queue with Redis backend = job persists even if app server crashes mid-generation</div><div class="scale-item">Scale worker pods independently from API pods — PDF workers are CPU-heavy</div></div><div class="scale-card"><div class="scale-card-title">PUPPETEER AT SCALE</div><div class="scale-item">Run Puppeteer in <b>separate Docker container</b> (dedicated worker), not in main API process</div><div class="scale-item"><b>Browser pool</b>: Keep 2-3 Puppeteer instances warm (browser launch is slow ~2s)</div><div class="scale-item">S3 cache: same report requested within 1hr → return cached URL, skip regeneration</div></div></div></div></div>
+    </div>
+  </div>
+
+  <div class="api-row" id="api-rep-3"><div class="api-top" onclick="tog('rep-3')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/html</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Raw HTML report — expo-print uses this directly for mobile printing.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response</div><div class="codeblock">Content-Type: text/html
+Body: &lt;!DOCTYPE html&gt; full report HTML</div></div></div><div class="prompt-box" id="prompt-rep-3"><div class="prompt-header" onclick="togPrompt('rep-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-rep-3">Build GET /api/v1/reports/site/:siteId/html — returns raw HTML for mobile print.
+
+1. Get full report data: await reportsService.getFullReport(siteId, userId)
+2. Generate HTML: const html = generateSiteReportHTML(reportData)
+3. res.setHeader('Content-Type', 'text/html; charset=utf-8')
+   res.send(html)
+
+generateSiteReportHTML(data) function should be in src/lib/reportTemplate.ts:
+- Inline all CSS (no external stylesheets — expo-print doesn't load external resources)
+- Include: site header, financial summary table, expense breakdown, completion checklist, casting dates table, activities timeline, full transactions list
+- Print-friendly: white background, dark text, clear tables
+- A4 page size: @page { size: A4; margin: 15mm; }
+
+IMPORTANT: All images must be base64 inline (logo, etc.) — no external URL references for print compatibility.</div><button class="copy-btn" onclick="copyPrompt('rep-3')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-rep-4"><div class="api-top" onclick="tog('rep-4')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/share</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">PDF link WhatsApp ya email se share karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">via</td><td class="ptype">whatsapp|email</td><td class="preq r">required</td></tr><tr><td class="pname">to</td><td class="ptype">string</td><td class="preq r">required</td></tr></table></div></div></div></div>
+
+  <div class="api-row" id="api-rep-5"><div class="api-top" onclick="tog('rep-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/expense-chart</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Expense split chart data — pie/bar chart ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"chartData"</span>: [{ <span class="ck2">"name"</span>: <span class="cs">"Steel"</span>, <span class="ck2">"amount"</span>: <span class="cn">85000</span>, <span class="ck2">"percent"</span>: <span class="cn">13.7</span> }] }</div></div></div></div></div>
+</div>
+
+<!-- ═══════════════════ REMINDERS ═══════════════════ -->
+<div class="module-block" id="reminders">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(245,158,11,0.1)">🔔</div>
+    <div><div class="module-title">Reminders</div><div class="module-path">/api/v1/reminders</div></div>
+    <div class="module-badge" style="background:rgba(245,158,11,0.1);color:#FCD34D;border:1px solid rgba(245,158,11,0.2)">5 APIs</div>
+  </div>
+  <div class="module-desc">Site-linked reminders. Push notifications via Expo Notifications client-side. Server cron job pushes upcoming reminders daily at 8AM via Bull Queue.</div>
+
+  <div class="api-row" id="api-rem-1"><div class="api-top" onclick="tog('rem-1')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reminders</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">User ke saare reminders sorted by date. ?siteId= filter optional.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"reminders"</span>: [{ <span class="ck2">"id"</span>, <span class="ck2">"title"</span>: <span class="cs">"Pay cement bill"</span>, <span class="ck2">"site"</span>: { <span class="ck2">"name"</span>: <span class="cs">"Sharma Villa"</span> }, <span class="ck2">"date"</span>: <span class="cs">"2026-03-15T09:00:00Z"</span> }] }</div></div></div><div class="prompt-box" id="prompt-rem-1"><div class="prompt-header" onclick="togPrompt('rem-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-rem-1">Build GET /api/v1/reminders — get user's reminders.
+
+1. Accept optional ?siteId query param
+2. Build query: SELECT r.*, s.name as site_name FROM reminders r
+   LEFT JOIN sites s ON s.id = r.site_id
+   WHERE r.user_id = userId [AND r.site_id = siteId if provided]
+   ORDER BY r.date ASC
+3. Split into upcoming and past: upcoming = date >= now, past = date < now
+4. Return { upcoming: [...], past: [...] }
+
+Store Expo Push Token: Add expo_push_token column to auth_users.
+Mobile app sends token on login: PUT /users/me with { expoPushToken }
+Cron job (src/jobs/reminderCron.ts) runs daily at 8AM:
+  SELECT r.*, u.expo_push_token FROM reminders r
+  JOIN auth_users u ON u.id = r.user_id
+  WHERE r.date::date = CURRENT_DATE AND u.expo_push_token IS NOT NULL
+  → For each: send Expo push notification via https://exp.host/--/api/v2/push/send</div><button class="copy-btn" onclick="copyPrompt('rem-1')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-rem-2"><div class="api-top" onclick="tog('rem-2')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/reminders</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Naya reminder add karo.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">title</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">date</td><td class="ptype">datetime</td><td class="preq r">required</td></tr><tr><td class="pname">siteId</td><td class="ptype">string</td><td class="preq o">optional</td></tr></table></div><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400</span></div></div></div><div class="prompt-box" id="prompt-rem-2"><div class="prompt-header" onclick="togPrompt('rem-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-rem-2">Build POST /api/v1/reminders — create reminder.
+
+1. Zod: { title: z.string().min(2).max(100), date: z.string().datetime(), siteId: z.string().uuid().optional() }
+2. If siteId provided: verify it belongs to req.user.userId
+3. Validate: date must be in the future (date > new Date())
+4. Insert into reminders table with userId = req.user.userId
+5. Return 201 { reminder: newReminder }
+
+PUSH NOTIFICATION SCHEDULING:
+After insert, add to Bull delayed queue:
+  const delay = new Date(date).getTime() - Date.now();
+  await notificationQueue.add('send-push', { reminderId: reminder.id, userId, title }, { delay });
+This sends push at exact time rather than only daily batch cron.</div><button class="copy-btn" onclick="copyPrompt('rem-2')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-rem-3"><div class="api-top" onclick="tog('rem-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/reminders/</span><span class="seg-param">:reminderId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Reminder update karo — title ya date change.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-rem-4"><div class="api-top" onclick="tog('rem-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/reminders/</span><span class="seg-param">:reminderId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Reminder delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-rem-5"><div class="api-top" onclick="tog('rem-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reminders/upcoming</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Next 7 days ke reminders — push notification cron job bhi yahi use karta hai.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span></div></div></div></div></div>
+</div>
+
+<!-- ═══════════════════ USER ═══════════════════ -->
+<div class="module-block" id="user">
+  <div class="module-head">
+    <div class="module-icon-wrap" style="background:rgba(168,85,247,0.1)">👤</div>
+    <div><div class="module-title">User Profile</div><div class="module-path">/api/v1/users</div></div>
+    <div class="module-badge" style="background:rgba(168,85,247,0.1);color:#C084FC;border:1px solid rgba(168,85,247,0.2)">3 APIs</div>
+  </div>
+  <div class="module-desc">Basic profile management. Currently only CONTRACTOR role. Future mein owner login — ownerPhone field already Site entity mein hai. expoPushToken bhi yahan store hoga for notifications.</div>
+
+  <div class="api-row" id="api-usr-1"><div class="api-top" onclick="tog('usr-1')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/users/me</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Current user profile fetch karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"id"</span>: <span class="cs">"uuid"</span>, <span class="ck2">"phone"</span>: <span class="cs">"+91..."</span>, <span class="ck2">"role"</span>: <span class="cs">"CONTRACTOR"</span>, <span class="ck2">"loggedInAt"</span>: <span class="cs">"..."</span>, <span class="ck2">"expoPushToken"</span>: <span class="cs">"ExponentPushToken[...]"</span> }</div></div></div><div class="prompt-box" id="prompt-usr-1"><div class="prompt-header" onclick="togPrompt('usr-1')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-usr-1">Build GET /api/v1/users/me — get current user profile.
+
+1. SELECT id, phone, role, logged_in_at, created_at, expo_push_token FROM auth_users WHERE id = req.user.userId
+2. If not found → 401 (shouldn't happen if JWT is valid, but handle gracefully)
+3. Return user object (exclude refreshToken, passwordHash, etc.)
+
+Add expo_push_token column to auth_users table:
+  Drizzle: expoPushToken: text('expo_push_token')
+  This is set via PUT /users/me when app registers for notifications.</div><button class="copy-btn" onclick="copyPrompt('usr-1')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-usr-2"><div class="api-top" onclick="tog('usr-2')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/users/me</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Profile update karo — expoPushToken update ke liye bhi use hota hai.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s400">400</span></div></div></div><div class="prompt-box" id="prompt-usr-2"><div class="prompt-header" onclick="togPrompt('usr-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-usr-2">Build PUT /api/v1/users/me — update user profile.
+
+1. Zod partial schema: { expoPushToken: z.string().startsWith('ExponentPushToken[').optional() }
+   (Future fields: name, profilePicUrl)
+2. Update auth_users SET expo_push_token = $token WHERE id = userId
+3. Return updated user profile
+
+This endpoint is called by mobile app on every app launch after login:
+  const token = await Notifications.getExpoPushTokenAsync();
+  await api.put('/users/me', { expoPushToken: token.data });</div><button class="copy-btn" onclick="copyPrompt('usr-2')">📋 Copy Prompt</button></div></div></div></div>
+
+  <div class="api-row" id="api-usr-3"><div class="api-top" onclick="tog('usr-3')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/users/me</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Account delete karo — saari sites aur linked data bhi. Soft delete (isDeleted flag) implement karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s401">401</span></div></div></div><div class="prompt-box" id="prompt-usr-3"><div class="prompt-header" onclick="togPrompt('usr-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-usr-3">Build DELETE /api/v1/users/me — account deletion with soft delete pattern.
+
+SOFT DELETE APPROACH (recommended):
+1. Add deleted_at TIMESTAMP column to auth_users table
+2. UPDATE auth_users SET deleted_at = NOW(), refresh_token = NULL WHERE id = userId
+3. Flush all Redis caches for this user: redis.del(`dash:${userId}`, `sites_list:${userId}`, ...)
+4. Return { success: true, message: "Account scheduled for deletion" }
+5. Background job: after 30 days, hard delete if user hasn't reactivated
+
+HARD DELETE APPROACH (simpler):
+  DB transaction → delete all sites (cascade handles rest) → delete auth_user row
+  This is irreversible — add a 'confirm' field in request body: { confirm: "DELETE MY ACCOUNT" }
+  
+Add middleware to all routes: if req.user exists but user.deleted_at is set → return 401 "Account deleted"
+GDPR note: Log deletion request with timestamp for compliance audit trail.</div><button class="copy-btn" onclick="copyPrompt('usr-3')">📋 Copy Prompt</button></div></div></div></div>
+</div>
+
+</main>
+</div>
+
+<script>
+function tog(id){
+  const el = document.getElementById('api-'+id);
+  if(el) el.classList.toggle('open');
+}
+function navTo(id, btn){
+  const target = document.getElementById(id);
+  if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  else {
+    document.querySelectorAll('.sb-btn').forEach(b => {
+      if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+id+"'")) b.classList.add('active');
+    });
+  }
+}
+function togPrompt(id){
+  const box = document.getElementById('prompt-'+id);
+  if(box) box.classList.toggle('prompt-open');
+}
+function togScale(id){
+  const box = document.getElementById('scale-'+id);
+  if(box) box.classList.toggle('scale-open');
+}
+function copyPrompt(id){
+  const el = document.getElementById('prompt-text-'+id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(()=>{
+    const btn = el.nextElementSibling;
+    if(btn){ btn.textContent='✅ Copied!'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='📋 Copy Prompt'; btn.classList.remove('copied'); }, 2000); }
+  }).catch(()=>{
+    const range = document.createRange(); range.selectNode(el);
+    window.getSelection().removeAllRanges(); window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+  });
+}
+function filterAPIs(q){
+  q = q.toLowerCase().trim();
+  const rows = document.querySelectorAll('.api-row');
+  let visible = 0;
+  rows.forEach(r => {
+    const txt = r.textContent.toLowerCase();
+    const show = !q || txt.includes(q);
+    r.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  document.getElementById('apiCountBadge').textContent = q ? `⚡ ${visible} results` : '⚡ 46 APIs · 10 Modules';
+}
+
+// Intersection observer for sidebar active state
+const sections = document.querySelectorAll('.module-block[id]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting && entry.intersectionRatio > 0.15) {
+      const id = entry.target.id;
+      document.querySelectorAll('.sb-btn').forEach(b => {
+        b.classList.remove('active');
+        if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+id+"'")) b.classList.add('active');
+      });
+    }
+  });
+}, { threshold: 0.15 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
