@@ -306,6 +306,60 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 .arch-card-body{font-size:12px;color:#C4A882;line-height:1.75;}
 .arch-card-body b{color:#FDE68A;}
 .arch-card-body code{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FB923C;background:rgba(251,146,60,0.1);padding:1px 5px;border-radius:3px;}
+
+/* ── FLOW BOX ── */
+.flow-box{
+  margin-top:12px;
+  background:rgba(139,92,246,0.04);
+  border:1px solid rgba(139,92,246,0.25);
+  border-radius:8px;overflow:hidden;
+}
+.flow-header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:rgba(139,92,246,0.08);
+  border-bottom:1px solid rgba(139,92,246,0.18);
+  cursor:pointer;user-select:none;
+}
+.flow-header:hover{background:rgba(139,92,246,0.13);}
+.flow-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#A78BFA;text-transform:uppercase;font-weight:700;}
+.flow-sublabel{font-size:11.5px;color:var(--muted2);margin-left:auto;}
+.flow-chevron{color:#A78BFA;font-size:10px;transition:transform .2s;margin-left:6px;}
+.flow-box.flow-open .flow-chevron{transform:rotate(180deg);}
+.flow-content{display:none;padding:14px 16px;}
+.flow-box.flow-open .flow-content{display:block;}
+
+.flow-track{display:flex;flex-direction:column;gap:0;}
+.flow-step{display:flex;align-items:flex-start;gap:12px;position:relative;}
+.flow-step:not(:last-child)::after{
+  content:'';position:absolute;left:17px;top:34px;
+  width:2px;height:calc(100% - 4px);
+  background:linear-gradient(to bottom,rgba(139,92,246,0.4),rgba(139,92,246,0.1));
+}
+.flow-dot{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;border:1.5px solid rgba(139,92,246,0.3);
+  background:rgba(139,92,246,0.08);margin-top:2px;
+}
+.flow-dot.dot-app{border-color:rgba(59,130,246,0.4);background:rgba(59,130,246,0.08);}
+.flow-dot.dot-edge{border-color:rgba(249,115,22,0.4);background:rgba(249,115,22,0.08);}
+.flow-dot.dot-server{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.08);}
+.flow-dot.dot-redis{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);}
+.flow-dot.dot-db{border-color:rgba(99,102,241,0.4);background:rgba(99,102,241,0.08);}
+.flow-dot.dot-ext{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.08);}
+.flow-dot.dot-queue{border-color:rgba(236,72,153,0.4);background:rgba(236,72,153,0.08);}
+.flow-dot.dot-res{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.1);}
+
+.flow-body{padding:6px 0 14px;}
+.flow-title{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#C4B5FD;margin-bottom:4px;}
+.flow-desc{font-size:12px;color:#8B93B0;line-height:1.65;}
+.flow-desc b{color:#DDD6FE;}
+.flow-desc code{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#FB923C;background:rgba(251,146,60,0.1);padding:1px 5px;border-radius:3px;}
+.flow-desc .tag-redis{color:#F87171;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(239,68,68,0.08);padding:1px 5px;border-radius:3px;}
+.flow-desc .tag-db{color:#818CF8;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(99,102,241,0.08);padding:1px 5px;border-radius:3px;}
+.flow-desc .tag-ok{color:#34D399;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(16,185,129,0.08);padding:1px 5px;border-radius:3px;}
+.flow-desc .tag-err{color:#F87171;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:rgba(239,68,68,0.08);padding:1px 5px;border-radius:3px;}
 </style>
 </head>
 <body>
@@ -772,7 +826,69 @@ DO NOT store OTP in PostgreSQL. Redis only.</div>
           </div>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-auth-1">
+        <div class="flow-header" onclick="togFlow('auth-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">React Native App</div>
+            <div class="flow-desc">User ne phone number enter kiya → <b>POST /api/v1/auth/send-otp</b> call hoti hai with body <code>{ phone: "+91XXXXXXXXXX" }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-edge">☁️</div>
+          <div class="flow-body">
+            <div class="flow-title">Cloudflare Edge</div>
+            <div class="flow-desc">Bot check + edge rate limit — agar zyada requests hain usi IP se toh <span class="tag-err">429</span> return karta hai before server tak pahunche</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">⚖️</div>
+          <div class="flow-body">
+            <div class="flow-title">Nginx Load Balancer</div>
+            <div class="flow-desc">Round-robin se ek Node.js instance choose karta hai. Health check pass → request forward.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express Server — Zod Validation</div>
+            <div class="flow-desc"><code>auth.router.ts</code> → <code>auth.service.ts</code>. Phone format validate hota hai <code>+91XXXXXXXXXX</code>. Galat format → <span class="tag-err">400 Bad Request</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Rate Limit Check</div>
+            <div class="flow-desc"><span class="tag-redis">GET otp_limit:{phone}</span> → agar 3 se zyada OTP maange hain iss ghante → <span class="tag-err">429 Too Many Requests</span>. Counter increment: <span class="tag-redis">INCR otp_limit:{phone} EX 3600</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — OTP Store</div>
+            <div class="flow-desc">4-digit OTP generate hota hai → <span class="tag-redis">SET otp:{phone} "4821" EX 300</span>. 5 minute baad auto-expire. PostgreSQL mein OTP kabhi nahi jaata.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-ext">📨</div>
+          <div class="flow-body">
+            <div class="flow-title">MSG91 / Fast2SMS API</div>
+            <div class="flow-desc"><b>POST https://api.msg91.com/api/v5/otp</b> call hoti hai with template_id + OTP + mobile. Telecom network se SMS user ke phone pe pahuncha.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → App</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ success: true, expiresIn: 300 }</code>. App screen pe "OTP sent successfully" dikhta hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <!-- verify-otp -->
@@ -861,7 +977,57 @@ Use Drizzle's db.insert().onConflictDoUpdate() for upsert.</div>
           </div>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-auth-2">
+        <div class="flow-header" onclick="togFlow('auth-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">React Native App</div>
+            <div class="flow-desc">User ne 4-digit OTP enter kiya → <b>POST /api/v1/auth/verify-otp</b> with <code>{ phone, otp }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — Zod Validate</div>
+            <div class="flow-desc">Phone + OTP format validate. <code>otp: z.string().length(4)</code>. Galat → <span class="tag-err">400</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — OTP Match</div>
+            <div class="flow-desc"><span class="tag-redis">GET otp:{phone}</span> → <b>NULL?</b> → <span class="tag-err">401 OTP expired</span>. <b>Mismatch?</b> → <span class="tag-err">400 Invalid OTP</span>. <b>Match?</b> → immediately <span class="tag-redis">DEL otp:{phone}</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — User Upsert</div>
+            <div class="flow-desc"><span class="tag-db">INSERT INTO auth_users (phone) ON CONFLICT (phone) DO UPDATE SET logged_in_at=NOW()</span>. Naya user → isNew=true. Existing user → fetch karo.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🔑</div>
+          <div class="flow-body">
+            <div class="flow-title">JWT Token Generation</div>
+            <div class="flow-desc"><code>accessToken</code> (15min) + <code>refreshToken</code> (7 days) generate. <b>refreshToken ka bcrypt hash</b> → <span class="tag-db">UPDATE auth_users SET refresh_token=hash</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → AsyncStorage</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ accessToken, refreshToken, user }</code>. App mein <b>AsyncStorage</b> pe save → Dashboard redirect.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <!-- refresh -->
@@ -912,7 +1078,51 @@ FILE: src/modules/auth/auth.service.ts → refreshToken(token: string)</div>
           <button class="copy-btn" onclick="copyPrompt('auth-3')">📋 Copy Prompt</button>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-auth-3">
+        <div class="flow-header" onclick="togFlow('auth-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">App — Token Expired</div>
+            <div class="flow-desc">accessToken 15min baad expire → <b>POST /auth/refresh-token</b> with <code>{ refreshToken: "eyJ..." }</code>. Automatic — user ko pata nahi chalta.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — JWT Verify</div>
+            <div class="flow-desc"><code>jwt.verify(refreshToken, REFRESH_SECRET)</code>. Expired ya invalid → <span class="tag-err">401</span>. Valid → userId extract karo.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — DB Match</div>
+            <div class="flow-desc"><span class="tag-db">SELECT refresh_token FROM auth_users WHERE id=userId</span>. <code>bcrypt.compare(incoming, stored_hash)</code>. Mismatch → token theft suspected → <span class="tag-err">401</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🔑</div>
+          <div class="flow-body">
+            <div class="flow-title">Token Rotation</div>
+            <div class="flow-desc">New accessToken + new refreshToken generate. Old hash replace: <span class="tag-db">UPDATE auth_users SET refresh_token=newHash</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → App</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ accessToken (new), refreshToken (rotated) }</code>. App AsyncStorage update karta hai automatically.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <!-- logout -->
@@ -949,7 +1159,45 @@ Mobile app should clear AsyncStorage keys: ['accessToken', 'refreshToken', 'user
           <button class="copy-btn" onclick="copyPrompt('auth-4')">📋 Copy Prompt</button>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-auth-4">
+        <div class="flow-header" onclick="togFlow('auth-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">App — Logout Button</div>
+            <div class="flow-desc"><b>POST /auth/logout</b> with <code>Authorization: Bearer {accessToken}</code> header.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — JWT Middleware</div>
+            <div class="flow-desc"><code>auth.middleware.ts</code> → token verify → userId extract → <code>req.user</code> set.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Clear Token</div>
+            <div class="flow-desc"><span class="tag-db">UPDATE auth_users SET refresh_token=NULL, logged_in_at=NOW() WHERE id=userId</span>. Session invalidate.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → AsyncStorage Clear</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span>. App side: <code>AsyncStorage.multiRemove([accessToken, refreshToken, user])</code>. Welcome screen redirect.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 </div>
 
@@ -1052,7 +1300,57 @@ FILE: src/modules/sites/sites.service.ts → getUserSites(userId, query)</div>
           </div>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-sites-1">
+        <div class="flow-header" onclick="togFlow('sites-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">App — Sites List Screen Open</div>
+            <div class="flow-desc"><b>GET /api/v1/sites</b> with JWT header. App opens → sites list fetch hoti hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — JWT Middleware</div>
+            <div class="flow-desc">Token verify → userId extract. Unauthorized → <span class="tag-err">401</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Check</div>
+            <div class="flow-desc"><span class="tag-redis">GET sites_list:{userId}</span> → Cache HIT? → Immediately return JSON. Cache MISS → DB query.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Read Replica — Aggregated Query</div>
+            <div class="flow-desc"><span class="tag-db">SELECT sites.*, SUM(credit), SUM(debit) FROM sites LEFT JOIN transactions GROUP BY sites.id WHERE userId</span>. Single query, read replica se.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Set</div>
+            <div class="flow-desc"><span class="tag-redis">SET sites_list:{userId} JSON EX 30</span>. Agle 30 seconds mein same user ka request DB tak nahi jayega.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → App UI</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ sites: [...] }</code>. Har site card pe name + credit/debit/balance dikhta hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-sites-2">
@@ -1117,7 +1415,51 @@ FILE: src/modules/sites/sites.service.ts → createSite(userId, data)</div>
           <button class="copy-btn" onclick="copyPrompt('sites-2')">📋 Copy Prompt</button>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-sites-2">
+        <div class="flow-header" onclick="togFlow('sites-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Add Site Form Submit</div>
+            <div class="flow-desc"><b>POST /api/v1/sites</b> with body <code>{ name, address, budget, startDate, plotArea, plotUnit }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — Zod Validation</div>
+            <div class="flow-desc">name min 2 chars, budget positive number, startDate format YYYY-MM-DD. Fail → <span class="tag-err">400</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — DB Transaction (Atomic)</div>
+            <div class="flow-desc"><span class="tag-db">BEGIN TRANSACTION</span> → <b>INSERT INTO sites</b> (with userId from JWT) → <b>INSERT INTO site_completion</b> (siteId, completedStages=[]) → <span class="tag-db">COMMIT</span>. Dono ek saath ya dono fail.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Invalidate</div>
+            <div class="flow-desc"><span class="tag-redis">DEL sites_list:{userId}</span>. Dashboard bhi stale → <span class="tag-redis">DEL dash:{userId}</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → App</div>
+            <div class="flow-desc"><span class="tag-ok">201 Created</span> <code>{ site: { id, name, ... } }</code>. App new site detail screen pe navigate karta hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-sites-3">
@@ -1187,7 +1529,57 @@ FILE: src/modules/sites/sites.service.ts → getSiteDetail(siteId, userId)</div>
           </div>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-sites-3">
+        <div class="flow-header" onclick="togFlow('sites-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Site Card Tap → Detail Screen</div>
+            <div class="flow-desc"><b>GET /api/v1/sites/:siteId</b>. Most heavy endpoint — 6 parallel queries.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — Auth + Ownership Check</div>
+            <div class="flow-desc">JWT verify → userId. Site belongs to this user? <span class="tag-db">SELECT id FROM sites WHERE id=siteId AND userId=userId</span>. Nahi mila → <span class="tag-err">404</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Check</div>
+            <div class="flow-desc"><span class="tag-redis">GET site_detail:{siteId}</span> → HIT → instant return. MISS → 6 parallel DB queries.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Read Replica — Promise.all()</div>
+            <div class="flow-desc"><b>6 queries parallel:</b> site row + financial SUM + completion stages + recent 10 transactions + casting dates + active task. Sequential 60ms → Parallel <b>~15ms</b>.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Store</div>
+            <div class="flow-desc"><span class="tag-redis">SET site_detail:{siteId} JSON EX 15</span>. 15 second TTL — balance real-time feel ke liye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Site Detail UI</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> Full site object with financials, completion%, transactions, castings. Ek call mein sab kuch.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-sites-4">
@@ -1217,7 +1609,45 @@ FILE: src/modules/sites/sites.service.ts → updateSite(siteId, userId, data)</d
           <button class="copy-btn" onclick="copyPrompt('sites-4')">📋 Copy Prompt</button>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-sites-4">
+        <div class="flow-header" onclick="togFlow('sites-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Edit Site Form Submit</div>
+            <div class="flow-desc"><b>PUT /api/v1/sites/:siteId</b> with partial body (jo bhi fields change kiye).</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Ownership + Update</div>
+            <div class="flow-desc"><span class="tag-db">SELECT id FROM sites WHERE id=siteId AND userId</span>. Found → <span class="tag-db">UPDATE sites SET ... WHERE id=siteId RETURNING *</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Invalidate</div>
+            <div class="flow-desc"><span class="tag-redis">DEL site_detail:{siteId}</span> + <span class="tag-redis">DEL sites_list:{userId}</span>. Dono stale ho gaye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → App</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ site: updatedSite }</code>. UI updated site data dikhata hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-sites-5">
@@ -1267,7 +1697,45 @@ NOTE: Log deletion event for audit trail — INSERT into audit_log table or emit
           <button class="copy-btn" onclick="copyPrompt('sites-5')">📋 Copy Prompt</button>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-sites-5">
+        <div class="flow-header" onclick="togFlow('sites-5')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Delete Confirm Dialog → API Call</div>
+            <div class="flow-desc"><b>DELETE /api/v1/sites/:siteId</b>. UI pe confirm dialog mandatory hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Cascade Delete Transaction</div>
+            <div class="flow-desc"><span class="tag-db">BEGIN</span> → DELETE reminders → DELETE site_completion → DELETE casting_dates → DELETE site_tasks → DELETE transactions → DELETE site → <span class="tag-db">COMMIT</span>. 6 tables, ek transaction.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Multi-key Cache Flush</div>
+            <div class="flow-desc"><span class="tag-redis">DEL site_detail:{siteId} sites_list:{userId} stats:{siteId} dash:{userId}</span>. Pipeline se ek saath.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Sites List</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span>. App sites list pe wapas jaata hai. Deleted site wahan nahi dikhta.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 </div>
 
@@ -1348,7 +1816,45 @@ FILE: src/modules/transactions/tx.service.ts → getSiteTransactions(siteId, use
           <button class="copy-btn" onclick="copyPrompt('tx-1')">📋 Copy Prompt</button>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-tx-1">
+        <div class="flow-header" onclick="togFlow('tx-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Site Detail → Transactions Tab</div>
+            <div class="flow-desc"><b>GET /transactions/site/:siteId?page=1&limit=20</b>. Paginated list.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — Validate + Auth</div>
+            <div class="flow-desc">JWT verify + siteId ownership check. Query params parse: page, limit, type filter, date range.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Read Replica — Paginated Query</div>
+            <div class="flow-desc"><span class="tag-db">SELECT * FROM transactions WHERE siteId=:id ORDER BY date DESC LIMIT 20 OFFSET 0</span>. Index: <code>idx_tx_siteid_date</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Grouped by Date</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ transactions: [...], total, page, totalPages }</code>. App date se group karke dikhata hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-tx-2">
@@ -1439,7 +1945,51 @@ FILE: src/modules/transactions/tx.service.ts → createTransaction(userId, data)
           </div>
         </div>
       </div>
-    </div>
+    
+      <div class="flow-box" id="flow-tx-2">
+        <div class="flow-header" onclick="togFlow('tx-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Add Entry Form Submit</div>
+            <div class="flow-desc"><b>POST /transactions/site/:siteId</b> with <code>{ type: "debit", category: "material", subCategory: "Steel", amount: 85000, paymentMode: "bank", date, note }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — Zod Validation</div>
+            <div class="flow-desc">type enum, amount positive, paymentMode enum, date format validate. DECIMAL(15,2) ke liye amount precision check.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Primary — INSERT</div>
+            <div class="flow-desc"><span class="tag-db">INSERT INTO transactions (siteId, type, category, subCategory, amount, paymentMode, date, note) VALUES (...) RETURNING *</span>. Primary node pe write.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Invalidate Pipeline</div>
+            <div class="flow-desc"><span class="tag-redis">DEL stats:{siteId} site_detail:{siteId} dash:{userId} sites_list:{userId}</span>. Balance change hua → saare caches stale.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Real-time Balance Update</div>
+            <div class="flow-desc"><span class="tag-ok">201 Created</span>. App balance instantly re-fetch karta hai. User dekhta hai updated credit/debit.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-tx-3"><div class="api-top" onclick="tog('tx-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/transactions/</span><span class="seg-param">:txId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Transaction edit karo — amount, note, date, category update possible.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-tx-3"><div class="prompt-header" onclick="togPrompt('tx-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-tx-3">Build PUT /api/v1/transactions/:txId — update transaction. JWT protected.
@@ -1452,7 +2002,45 @@ REQUIREMENTS:
 5. Invalidate: DEL "stats:{tx.siteId}", "site_detail:{tx.siteId}", "sites_list:{userId}", "dash:{userId}"
 6. Return { success: true, transaction: updated }
 
-FILE: src/modules/transactions/tx.service.ts → updateTransaction(txId, userId, data)</div><button class="copy-btn" onclick="copyPrompt('tx-3')">📋 Copy Prompt</button></div></div></div></div>
+FILE: src/modules/transactions/tx.service.ts → updateTransaction(txId, userId, data)</div><button class="copy-btn" onclick="copyPrompt('tx-3')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-tx-3">
+        <div class="flow-header" onclick="togFlow('tx-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Edit Transaction Form Submit</div>
+            <div class="flow-desc"><b>PUT /transactions/:txId</b> with changed fields.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Verify + Update</div>
+            <div class="flow-desc"><span class="tag-db">SELECT tx.siteId FROM transactions JOIN sites ON sites.userId=userId WHERE tx.id=txId</span>. Ownership verify → <span class="tag-db">UPDATE transactions SET ... WHERE id=txId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Invalidate</div>
+            <div class="flow-desc"><span class="tag-redis">DEL stats:{siteId} site_detail:{siteId} dash:{userId}</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> updated transaction.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-tx-4"><div class="api-top" onclick="tog('tx-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/transactions/</span><span class="seg-param">:txId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Transaction delete karo. Balance automatically recalculates.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-tx-4"><div class="prompt-header" onclick="togPrompt('tx-4')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-tx-4">Build DELETE /api/v1/transactions/:txId — delete transaction. JWT protected.
 
@@ -1462,7 +2050,45 @@ FILE: src/modules/transactions/tx.service.ts → updateTransaction(txId, userId,
 4. Return { success: true }
 
 SOFT DELETE OPTION: Add deleted_at TIMESTAMP column. SET deleted_at = NOW() instead of hard delete.
-Add WHERE deleted_at IS NULL to all SELECT queries. Allows undo functionality in app.</div><button class="copy-btn" onclick="copyPrompt('tx-4')">📋 Copy Prompt</button></div></div></div></div>
+Add WHERE deleted_at IS NULL to all SELECT queries. Allows undo functionality in app.</div><button class="copy-btn" onclick="copyPrompt('tx-4')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-tx-4">
+        <div class="flow-header" onclick="togFlow('tx-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Delete Transaction</div>
+            <div class="flow-desc"><b>DELETE /transactions/:txId</b>. Swipe to delete ya delete button.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Verify + Delete</div>
+            <div class="flow-desc">Ownership check → <span class="tag-db">DELETE FROM transactions WHERE id=txId</span>. siteId save karo cache invalidation ke liye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Invalidate</div>
+            <div class="flow-desc"><span class="tag-redis">DEL stats:{siteId} site_detail:{siteId} dash:{userId} sites_list:{userId}</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span>. Transaction list refresh hota hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-tx-5">
     <div class="api-top" onclick="tog('tx-5')">
@@ -1509,7 +2135,51 @@ REQUIREMENTS:
 6. CACHE: "stats:{siteId}" TTL 30s, invalidate on transaction changes
 
 FILE: src/modules/transactions/tx.service.ts → getSiteSummary(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('tx-5')">📋 Copy Prompt</button></div></div>
-    </div>
+    
+      <div class="flow-box" id="flow-tx-5">
+        <div class="flow-header" onclick="togFlow('tx-5')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Reports Screen Open</div>
+            <div class="flow-desc"><b>GET /transactions/site/:siteId/summary</b>. Material/labour breakdown ke liye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Check</div>
+            <div class="flow-desc"><span class="tag-redis">GET stats:{siteId}</span> → HIT → return. MISS → 3 parallel DB queries.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — 3 Parallel Aggregations</div>
+            <div class="flow-desc"><b>Query 1:</b> <span class="tag-db">SUM by category (material/labour)</span>. <b>Query 2:</b> <span class="tag-db">SUM by subCategory ORDER BY total</span>. <b>Query 3:</b> <span class="tag-db">SELECT budget FROM sites</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Store</div>
+            <div class="flow-desc"><span class="tag-redis">SET stats:{siteId} JSON EX 30</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Charts</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ totalCredit, totalDebit, balance, materialTotal, labourTotal, breakdown: [...] }</code>. Pie chart + bar chart data.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-tx-6"><div class="api-top" onclick="tog('tx-6')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/transactions/</span><span class="seg-param">:txId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Single transaction detail — edit screen ke liye pre-fill data.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-tx-6"><div class="prompt-header" onclick="togPrompt('tx-6')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-tx-6">Build GET /api/v1/transactions/:txId — get single transaction detail.
@@ -1520,7 +2190,39 @@ FILE: src/modules/transactions/tx.service.ts → getSiteSummary(siteId, userId)<
 2. If not found → 404
 3. Return transaction object
 
-Simple endpoint, no caching needed. Fast single-row lookup by PK (UUID indexed).</div><button class="copy-btn" onclick="copyPrompt('tx-6')">📋 Copy Prompt</button></div></div></div></div>
+Simple endpoint, no caching needed. Fast single-row lookup by PK (UUID indexed).</div><button class="copy-btn" onclick="copyPrompt('tx-6')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-tx-6">
+        <div class="flow-header" onclick="togFlow('tx-6')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Edit Screen Pre-fill</div>
+            <div class="flow-desc"><b>GET /transactions/:txId</b>. Edit form open karne se pehle current data fetch.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Single Row + Ownership</div>
+            <div class="flow-desc"><span class="tag-db">SELECT tx.*, sites.name FROM transactions tx JOIN sites ON tx.siteId=sites.id WHERE tx.id=txId AND sites.userId=userId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Form Pre-fill</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> transaction object. Form fields automatically fill ho jaate hain.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 <!-- ═══════════════════ DASHBOARD ═══════════════════ -->
@@ -1575,7 +2277,51 @@ REQUIREMENTS:
 FILE: src/modules/dashboard/dashboard.service.ts → getDashboard(userId)
 USE READ REPLICA for the DB query.</div><button class="copy-btn" onclick="copyPrompt('dash-1')">📋 Copy Prompt</button></div></div>
       <div class="scale-box" id="scale-dash-1"><div class="scale-header" onclick="togScale('dash-1')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Most-hit endpoint</span><span class="scale-chevron">▼</span></div><div class="scale-content"><div class="scale-grid"><div class="scale-card"><div class="scale-card-title">CACHING IS CRITICAL</div><div class="scale-item">Dashboard is app's home screen — hit on every app open. At 50K DAU → <b>~500K hits/day</b></div><div class="scale-item">Redis cache <code>dash:{userId}</code> TTL 60s — 99% of requests never touch DB</div><div class="scale-item">Invalidate only on transaction write — not on every login</div></div><div class="scale-card"><div class="scale-card-title">SINGLE QUERY PATTERN</div><div class="scale-item">One <b>GROUP BY query</b> across sites + transactions is far better than per-site queries in a loop</div><div class="scale-item">With proper index on <code>(site_id, type)</code> this runs in ~5ms even with 10M transactions</div></div></div></div></div>
-    </div>
+    
+      <div class="flow-box" id="flow-dash-1">
+        <div class="flow-header" onclick="togFlow('dash-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">App Open → Dashboard Tab</div>
+            <div class="flow-desc"><b>GET /dashboard</b> — app ka home screen. Har app open pe ye call hoti hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Check (Most Important)</div>
+            <div class="flow-desc"><span class="tag-redis">GET dash:{userId}</span> → HIT (99% cases) → <b>instant return</b>. MISS → heavy DB query. TTL 60s.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Read Replica — GROUP BY Query</div>
+            <div class="flow-desc"><span class="tag-db">SELECT sites.*, SUM(credit), SUM(debit) FROM sites LEFT JOIN transactions GROUP BY sites.id WHERE userId</span>. Single query for all sites.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Store</div>
+            <div class="flow-desc"><span class="tag-redis">SET dash:{userId} JSON EX 60</span>. 60 second TTL — refresh on transaction write.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Dashboard UI</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ summary: { totalCredit, totalDebit, totalBalance, totalSites }, sites: [...] }</code>. Green/red profit-loss cards.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-dash-2"><div class="api-top" onclick="tog('dash-2')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/dashboard/monthly</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Last 6 months ka monthly credit/debit — chart data ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"monthly"</span>: [{ <span class="ck2">"month"</span>: <span class="cs">"Jan 2026"</span>, <span class="ck2">"credit"</span>: <span class="cn">350000</span>, <span class="ck2">"debit"</span>: <span class="cn">280000</span> }] }</div></div></div><div class="prompt-box" id="prompt-dash-2"><div class="prompt-header" onclick="togPrompt('dash-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-dash-2">Build GET /api/v1/dashboard/monthly — last 6 months credit/debit for chart.
@@ -1595,7 +2341,45 @@ SQL query using DATE_TRUNC:
 
 Fill missing months with 0 in JS (user may have no transactions in some months).
 Cache: "monthly:{userId}" TTL 3600 (1 hour — changes infrequently)
-Return { monthly: [{ month, credit, debit }] }</div><button class="copy-btn" onclick="copyPrompt('dash-2')">📋 Copy Prompt</button></div></div></div></div>
+Return { monthly: [{ month, credit, debit }] }</div><button class="copy-btn" onclick="copyPrompt('dash-2')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-dash-2">
+        <div class="flow-header" onclick="togFlow('dash-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Dashboard — Monthly Chart</div>
+            <div class="flow-desc"><b>GET /dashboard/monthly</b>. Line chart ke liye last 6 months ka data.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cache Check</div>
+            <div class="flow-desc"><span class="tag-redis">GET monthly:{userId}</span> → HIT → return. TTL 3600s (1 hour) — chart rarely changes.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — DATE_TRUNC Query</div>
+            <div class="flow-desc"><span class="tag-db">SELECT DATE_TRUNC(month, date), SUM(credit), SUM(debit) FROM transactions JOIN sites WHERE userId GROUP BY month ORDER BY month ASC</span>. Last 6 months filter.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Line Chart</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ monthly: [{ month: "Jan 2026", credit, debit }] }</code>. JS mein missing months 0 se fill.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-dash-3"><div class="api-top" onclick="tog('dash-3')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/dashboard/reminders-today</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Aaj aur aane wale 2 din ke reminders — dashboard notification bar ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span></div></div></div><div class="prompt-box" id="prompt-dash-3"><div class="prompt-header" onclick="togPrompt('dash-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-dash-3">Build GET /api/v1/dashboard/reminders-today — upcoming reminders for dashboard.
 
@@ -1608,7 +2392,39 @@ ORDER BY r.date ASC
 LIMIT 10
 
 Return { reminders: [...], count: n }
-No caching — reminders must be real-time accurate for notification display.</div><button class="copy-btn" onclick="copyPrompt('dash-3')">📋 Copy Prompt</button></div></div></div></div>
+No caching — reminders must be real-time accurate for notification display.</div><button class="copy-btn" onclick="copyPrompt('dash-3')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-dash-3">
+        <div class="flow-header" onclick="togFlow('dash-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Dashboard — Reminders Bar</div>
+            <div class="flow-desc"><b>GET /dashboard/reminders-today</b>. App open pe notification bar ke liye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Date Range Query</div>
+            <div class="flow-desc"><span class="tag-db">SELECT * FROM reminders WHERE userId AND date BETWEEN NOW() AND NOW()+2days ORDER BY date ASC</span>. Index: <code>idx_reminders_userid</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Notification Bar</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ reminders: [...] }</code>. Aaj + 2 din ke reminders dashboard pe dikhte hain.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 <!-- ═══════════════════ COMPLETION ═══════════════════ -->
@@ -1643,7 +2459,39 @@ const ALL_STAGES = [
 4. completionPercent = (completedStages.length / 12) * 100
 5. Return { completedStages, allStages, completionPercent }
 
-FILE: src/modules/completion/completion.service.ts</div><button class="copy-btn" onclick="copyPrompt('comp-1')">📋 Copy Prompt</button></div></div></div></div>
+FILE: src/modules/completion/completion.service.ts</div><button class="copy-btn" onclick="copyPrompt('comp-1')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-comp-1">
+        <div class="flow-header" onclick="togFlow('comp-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Site Detail → Completion Section</div>
+            <div class="flow-desc"><b>GET /completion/:siteId</b>. 12-stage checklist render karne ke liye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Single Row Fetch</div>
+            <div class="flow-desc"><span class="tag-db">SELECT completedStages FROM site_completion WHERE siteId=:id</span>. One-to-one with Site table.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Checklist UI</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ completedStages: ["foundation","slab_casting"], percent: 16.7 }</code>. Checkboxes render.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-comp-2"><div class="api-top" onclick="tog('comp-2')"><span class="method m-PATCH">PATCH</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/toggle</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Stage toggle karo — already done → remove, nahi → add. toggleCompletionStage() logic.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">stage</td><td class="ptype">string (stage key)</td><td class="preq r">required</td></tr></table></div><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"completedStages"</span>: [<span class="cc">...updated</span>], <span class="ck2">"completionPercent"</span>: <span class="cn">33.3</span> }</div></div></div><div class="prompt-box" id="prompt-comp-2"><div class="prompt-header" onclick="togPrompt('comp-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-comp-2">Build PATCH /api/v1/completion/:siteId/toggle — toggle a construction stage.
 
@@ -1666,10 +2514,118 @@ Toggle using array operations in SQL directly (optional, more efficient):
     CASE WHEN $stage = ANY(completed_stages) 
     THEN array_remove(completed_stages, $stage)
     ELSE array_append(completed_stages, $stage) END
-  WHERE site_id = $siteId</div><button class="copy-btn" onclick="copyPrompt('comp-2')">📋 Copy Prompt</button></div></div></div></div>
+  WHERE site_id = $siteId</div><button class="copy-btn" onclick="copyPrompt('comp-2')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-comp-2">
+        <div class="flow-header" onclick="togFlow('comp-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Stage Checkbox Tap</div>
+            <div class="flow-desc"><b>PATCH /completion/:siteId/toggle</b> with <code>{ stage: "brick_work" }</code>. Ek stage toggle karo.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Array Toggle</div>
+            <div class="flow-desc">Stage already mein hai? → <span class="tag-db">array_remove(completedStages, stage)</span>. Nahi hai? → <span class="tag-db">array_append(completedStages, stage)</span>. Single atomic update.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Invalidate</div>
+            <div class="flow-desc"><span class="tag-redis">DEL site_detail:{siteId}</span>. Completion % site detail mein bhi dikhta hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Updated %</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ completedStages: [...], percent: 25.0 }</code>. Progress bar instantly update.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
-  <div class="api-row" id="api-comp-3"><div class="api-top" onclick="tog('comp-3')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/initialize</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Site create hone pe auto-call — empty SiteCompletion row banao. Direct user call rarely needed.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s409">409 Already exists</span></div></div></div></div></div>
-  <div class="api-row" id="api-comp-4"><div class="api-top" onclick="tog('comp-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/reset</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Saari stages reset karo — completedStages = []. Confirm dialog zaroori.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-comp-3"><div class="api-top" onclick="tog('comp-3')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/initialize</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Site create hone pe auto-call — empty SiteCompletion row banao. Direct user call rarely needed.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s409">409 Already exists</span></div></div></div>
+      <div class="flow-box" id="flow-comp-3">
+        <div class="flow-header" onclick="togFlow('comp-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Site Create ke baad</div>
+            <div class="flow-desc"><b>POST /completion/:siteId/initialize</b>. Isse directly call nahi kiya jaata — site create ke saath automatically hota hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Insert Empty Row</div>
+            <div class="flow-desc"><span class="tag-db">INSERT INTO site_completion (siteId, completedStages) VALUES (siteId, [])</span>. Site creation ke DB transaction mein hi hota hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">201 Created</span>. Normally user directly nahi dekhta — internal process.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
+  <div class="api-row" id="api-comp-4"><div class="api-top" onclick="tog('comp-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/completion/</span><span class="seg-param">:siteId</span><span class="seg-base">/reset</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Saari stages reset karo — completedStages = []. Confirm dialog zaroori.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-comp-4">
+        <div class="flow-header" onclick="togFlow('comp-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Reset All Stages</div>
+            <div class="flow-desc"><b>DELETE /completion/:siteId/reset</b>. Saari stages uncheck karo.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Clear Array</div>
+            <div class="flow-desc"><span class="tag-db">UPDATE site_completion SET completedStages=[] WHERE siteId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Invalidate</div>
+            <div class="flow-desc"><span class="tag-redis">DEL site_detail:{siteId}</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span>. Completion 0% reset. All checkboxes unchecked.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 <!-- ═══════════════════ CASTING ═══════════════════ -->
@@ -1693,7 +2649,39 @@ Toggle using array operations in SQL directly (optional, more efficient):
 
 CASTING TYPES ENUM: foundation | plinth_beam | column | slab | granite_slab
 Store as text column with application-level validation (easier to extend later).
-FILE: src/modules/casting/casting.service.ts</div><button class="copy-btn" onclick="copyPrompt('cast-1')">📋 Copy Prompt</button></div></div></div></div>
+FILE: src/modules/casting/casting.service.ts</div><button class="copy-btn" onclick="copyPrompt('cast-1')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-cast-1">
+        <div class="flow-header" onclick="togFlow('cast-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Site Detail → Casting Dates Section</div>
+            <div class="flow-desc"><b>GET /casting/site/:siteId</b>. Casting history list.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Read Replica</div>
+            <div class="flow-desc"><span class="tag-db">SELECT * FROM casting_dates WHERE siteId ORDER BY date DESC</span>. Index: <code>idx_casting_siteid</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Casting List</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ castings: [{ type: "Slab", date, endDate, note }] }</code>. Icons ke saath list render.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-cast-2"><div class="api-top" onclick="tog('cast-2')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/casting</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Nayi casting event add karo.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">siteId</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">castingType</td><td class="ptype">foundation|plinth_beam|column|slab|granite_slab</td><td class="preq r">required</td></tr><tr><td class="pname">date</td><td class="ptype">date</td><td class="preq r">required</td></tr><tr><td class="pname">endDate</td><td class="ptype">date</td><td class="preq o">optional</td></tr><tr><td class="pname">note</td><td class="ptype">string</td><td class="preq o">optional</td></tr></table></div><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400</span><span class="sc s404">404</span></div></div></div><div class="prompt-box" id="prompt-cast-2"><div class="prompt-header" onclick="togPrompt('cast-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-cast-2">Build POST /api/v1/casting — create casting date record.
 
@@ -1704,11 +2692,151 @@ FILE: src/modules/casting/casting.service.ts</div><button class="copy-btn" oncli
 5. Invalidate "site_detail:{siteId}" cache
 6. Return 201 { casting: newRecord }
 
-FILE: src/modules/casting/casting.service.ts → createCasting(userId, data)</div><button class="copy-btn" onclick="copyPrompt('cast-2')">📋 Copy Prompt</button></div></div></div></div>
+FILE: src/modules/casting/casting.service.ts → createCasting(userId, data)</div><button class="copy-btn" onclick="copyPrompt('cast-2')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-cast-2">
+        <div class="flow-header" onclick="togFlow('cast-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Add Casting Date Form</div>
+            <div class="flow-desc"><b>POST /casting/site/:siteId</b> with <code>{ castingType: "column", date: "2026-01-15", endDate, note }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Zod Validate</div>
+            <div class="flow-desc">castingType enum (foundation/plinth/column/slab/granite), date format, endDate after date.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Primary — INSERT</div>
+            <div class="flow-desc"><span class="tag-db">INSERT INTO casting_dates (siteId, castingType, date, endDate, note) VALUES (...) RETURNING *</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Invalidate</div>
+            <div class="flow-desc"><span class="tag-redis">DEL site_detail:{siteId}</span>. Casting dates site detail mein bhi dikhti hain.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">201 Created</span> new casting record.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
-  <div class="api-row" id="api-cast-3"><div class="api-top" onclick="tog('cast-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Casting record update karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
-  <div class="api-row" id="api-cast-4"><div class="api-top" onclick="tog('cast-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Casting record delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
-  <div class="api-row" id="api-cast-5"><div class="api-top" onclick="tog('cast-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Single casting record — edit form pre-fill.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-cast-3"><div class="api-top" onclick="tog('cast-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Casting record update karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-cast-3">
+        <div class="flow-header" onclick="togFlow('cast-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Edit Casting Date</div>
+            <div class="flow-desc"><b>PUT /casting/:castingId</b> with partial fields.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Verify + Update</div>
+            <div class="flow-desc">Join with sites to verify ownership → <span class="tag-db">UPDATE casting_dates SET ... WHERE id=castingId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> updated record.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
+  <div class="api-row" id="api-cast-4"><div class="api-top" onclick="tog('cast-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Casting record delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-cast-4">
+        <div class="flow-header" onclick="togFlow('cast-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Delete Casting Date</div>
+            <div class="flow-desc"><b>DELETE /casting/:castingId</b></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Verify + Delete</div>
+            <div class="flow-desc">Ownership verify → <span class="tag-db">DELETE FROM casting_dates WHERE id=castingId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span></div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
+  <div class="api-row" id="api-cast-5"><div class="api-top" onclick="tog('cast-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/casting/</span><span class="seg-param">:castingId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Single casting record — edit form pre-fill.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-cast-5">
+        <div class="flow-header" onclick="togFlow('cast-5')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Edit Screen Pre-fill</div>
+            <div class="flow-desc"><b>GET /casting/:castingId</b>. Edit form open pe current data fetch.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Single Row + Auth</div>
+            <div class="flow-desc"><span class="tag-db">SELECT cd.* FROM casting_dates cd JOIN sites ON cd.siteId=sites.id WHERE cd.id=castingId AND sites.userId=userId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> casting object for form pre-fill.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 <!-- ═══════════════════ ACTIVITIES ═══════════════════ -->
@@ -1740,14 +2868,78 @@ FILE: src/modules/casting/casting.service.ts → createCasting(userId, data)</di
    const categories = groupBy(tasks, 'category') → [{name, tasks}]
 6. Return { activeTask: activeTask || null, categories }
 
-FILE: src/modules/activities/activities.service.ts → getSiteActivities(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('act-1')">📋 Copy Prompt</button></div></div></div></div>
+FILE: src/modules/activities/activities.service.ts → getSiteActivities(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('act-1')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-act-1">
+        <div class="flow-header" onclick="togFlow('act-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Activities Screen Open</div>
+            <div class="flow-desc"><b>GET /activities/site/:siteId</b>. All tasks list with status.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Read Replica</div>
+            <div class="flow-desc"><span class="tag-db">SELECT * FROM site_tasks WHERE siteId ORDER BY createdAt DESC</span>. Status color coding ke liye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Task List</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ tasks: [{ name, status, activeTime }] }</code>. Running task orange badge, done task green tick.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-act-2"><div class="api-top" onclick="tog('act-2')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/activities</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Nayi activity create karo — status: pending se start.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">siteId</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">name</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">category</td><td class="ptype">string</td><td class="preq r">required</td></tr></table></div><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400</span></div></div></div><div class="prompt-box" id="prompt-act-2"><div class="prompt-header" onclick="togPrompt('act-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-act-2">Build POST /api/v1/activities — create activity task.
 
 1. Zod: { siteId: uuid, name: z.string().min(2).max(100), category: z.string().min(2).max(50) }
 2. Verify ownership. Insert with status='pending', startTime=null, pausedDuration=0
 3. Return 201 { task: newTask }
-Categories suggestion list (not enforced, free text): Excavation, Foundation, Shuttering, Steel Binding, Casting, Brickwork, Plaster, Plumbing, Electrical, Tiling, Painting, Finishing</div><button class="copy-btn" onclick="copyPrompt('act-2')">📋 Copy Prompt</button></div></div></div></div>
+Categories suggestion list (not enforced, free text): Excavation, Foundation, Shuttering, Steel Binding, Casting, Brickwork, Plaster, Plumbing, Electrical, Tiling, Painting, Finishing</div><button class="copy-btn" onclick="copyPrompt('act-2')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-act-2">
+        <div class="flow-header" onclick="togFlow('act-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">New Activity Create</div>
+            <div class="flow-desc"><b>POST /activities/site/:siteId</b> with <code>{ name: "Shuttering Work", category: "Shuttering" }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Primary — INSERT</div>
+            <div class="flow-desc"><span class="tag-db">INSERT INTO site_tasks (siteId, name, category, status="pending", pausedDuration=0) VALUES (...) RETURNING *</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">201 Created</span>. New task "pending" status ke saath list mein appear hota hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-act-3">
     <div class="api-top" onclick="tog('act-3')">
@@ -1807,11 +2999,113 @@ REQUIREMENTS:
 
 FILE: src/modules/activities/activities.service.ts → handleTaskAction(taskId, userId, action)</div><button class="copy-btn" onclick="copyPrompt('act-3')">📋 Copy Prompt</button></div></div>
       <div class="scale-box" id="scale-act-3"><div class="scale-header" onclick="togScale('act-3')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Timer state consistency</span><span class="scale-chevron">▼</span></div><div class="scale-content"><div class="scale-grid"><div class="scale-card"><div class="scale-card-title">STATE MACHINE INTEGRITY</div><div class="scale-item"><b>Race condition:</b> Two simultaneous START requests for same site. Use <b>DB-level unique constraint</b> or Redis distributed lock: <code>SET lock:task:{siteId} 1 EX 5 NX</code></div><div class="scale-item">Single-activity-per-site rule enforced at DB level, not just app level</div></div><div class="scale-card"><div class="scale-card-title">REDIS FOR PAUSE STATE</div><div class="scale-item">Pause start time stored in Redis (not DB) — frequently updated, fast read/write needed</div><div class="scale-item">TTL 24h — if app crashes, pause state doesn't persist forever, task auto-expires</div></div></div></div></div>
-    </div>
+    
+      <div class="flow-box" id="flow-act-3">
+        <div class="flow-header" onclick="togFlow('act-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Start / Pause / Resume / End Button</div>
+            <div class="flow-desc"><b>PATCH /activities/:taskId/action</b> with <code>{ action: "START" | "PAUSE" | "RESUME" | "END" }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Timer Logic</div>
+            <div class="flow-desc"><b>PAUSE:</b> <span class="tag-redis">SET pause_start:{taskId} timestamp EX 86400</span>. <b>RESUME:</b> <span class="tag-redis">GET pause_start:{taskId}</span> → calculate paused duration → <span class="tag-redis">DEL pause_start:{taskId}</span>. <b>Distributed lock</b> for single active task rule.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Primary — State Update</div>
+            <div class="flow-desc"><b>START:</b> <span class="tag-db">UPDATE SET status="running", startTime=NOW()</span>. <b>PAUSE:</b> <span class="tag-db">UPDATE SET status="paused", pausedDuration+=elapsed</span>. <b>END:</b> <span class="tag-db">UPDATE SET status="done", endTime=NOW()</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Timer UI</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ task, activeTime }</code>. Timer display update, button state change.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
-  <div class="api-row" id="api-act-4"><div class="api-top" onclick="tog('act-4')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/activities/</span><span class="seg-param">:taskId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Activity name ya category update karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
-  <div class="api-row" id="api-act-5"><div class="api-top" onclick="tog('act-5')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/activities/</span><span class="seg-param">:taskId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Activity delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
+  <div class="api-row" id="api-act-4"><div class="api-top" onclick="tog('act-4')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/activities/</span><span class="seg-param">:taskId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Activity name ya category update karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-act-4">
+        <div class="flow-header" onclick="togFlow('act-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Edit Task Name/Category</div>
+            <div class="flow-desc"><b>PUT /activities/:taskId</b> with partial update.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Ownership + Update</div>
+            <div class="flow-desc">Join verify → <span class="tag-db">UPDATE site_tasks SET name=:name, category=:cat WHERE id=taskId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> updated task.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
+  <div class="api-row" id="api-act-5"><div class="api-top" onclick="tog('act-5')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/activities/</span><span class="seg-param">:taskId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Activity delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-act-5">
+        <div class="flow-header" onclick="togFlow('act-5')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Delete Task</div>
+            <div class="flow-desc"><b>DELETE /activities/:taskId</b></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Delete</div>
+            <div class="flow-desc">Ownership verify → <span class="tag-db">DELETE FROM site_tasks WHERE id=taskId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span></div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
   <div class="api-row" id="api-act-6"><div class="api-top" onclick="tog('act-6')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/activities/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/timeline</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Completed activities chronological — report screen timeline. Duration human-readable ("8h 30m").</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"timeline"</span>: [{ <span class="ck2">"name"</span>: <span class="cs">"Foundation Shuttering"</span>, <span class="ck2">"category"</span>: <span class="cs">"Shuttering"</span>, <span class="ck2">"startTime"</span>: <span class="cs">"..."</span>, <span class="ck2">"endTime"</span>: <span class="cs">"..."</span>, <span class="ck2">"duration"</span>: <span class="cs">"8h 30m"</span> }] }</div></div></div><div class="prompt-box" id="prompt-act-6"><div class="prompt-header" onclick="togPrompt('act-6')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-act-6">Build GET /api/v1/activities/site/:siteId/timeline — completed tasks in chronological order.
 
 1. SELECT * FROM site_tasks WHERE site_id = siteId AND status = 'done' ORDER BY start_time ASC
@@ -1824,7 +3118,39 @@ FILE: src/modules/activities/activities.service.ts → handleTaskAction(taskId, 
    }
 3. Return { timeline: tasks.map(t => ({ ...t, duration: formatDuration(calcActiveSeconds(t)) })) }
 
-This endpoint is used in reports — no caching needed (called infrequently).</div><button class="copy-btn" onclick="copyPrompt('act-6')">📋 Copy Prompt</button></div></div></div></div>
+This endpoint is used in reports — no caching needed (called infrequently).</div><button class="copy-btn" onclick="copyPrompt('act-6')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-act-6">
+        <div class="flow-header" onclick="togFlow('act-6')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Report — Activity Timeline</div>
+            <div class="flow-desc"><b>GET /activities/site/:siteId/timeline</b>. Report screen ke liye completed activities.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Done Tasks with Duration</div>
+            <div class="flow-desc"><span class="tag-db">SELECT *, (EXTRACT EPOCH FROM endTime-startTime) - pausedDuration AS activeSeconds FROM site_tasks WHERE siteId AND status="done" ORDER BY endTime DESC</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Timeline</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ timeline: [{ name, duration: "2h 45m", date }] }</code>. Report mein activity section render.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 <!-- ═══════════════════ REPORTS ═══════════════════ -->
@@ -1866,7 +3192,45 @@ REQUIREMENTS:
 
 PATTERN: Report service calls other services' internal functions (not via HTTP).
 This is the benefit of monolith — direct function calls, no network overhead.
-FILE: src/modules/reports/reports.service.ts → getFullReport(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('rep-1')">📋 Copy Prompt</button></div></div></div></div>
+FILE: src/modules/reports/reports.service.ts → getFullReport(siteId, userId)</div><button class="copy-btn" onclick="copyPrompt('rep-1')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-rep-1">
+        <div class="flow-header" onclick="togFlow('rep-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Reports Screen Open</div>
+            <div class="flow-desc"><b>GET /reports/:siteId</b>. Full site report data — all sections.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Multi Cache Check</div>
+            <div class="flow-desc"><span class="tag-redis">GET stats:{siteId}</span> + <span class="tag-redis">GET site_detail:{siteId}</span>. Parallel cache reads.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — 5 Parallel Queries</div>
+            <div class="flow-desc">Transactions + completion + casting + activities + site info — <b>Promise.all()</b> se parallel. Read replica.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Full Report UI</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> Complete report object — financial cards, charts, stage checklist, expense breakdown, activity timeline, casting table.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-rep-2">
     <div class="api-top" onclick="tog('rep-2')">
@@ -1933,7 +3297,57 @@ STEP 3 — Poll endpoint:
 
 FILE: src/modules/reports/reports.router.ts + src/jobs/pdfWorker.ts</div><button class="copy-btn" onclick="copyPrompt('rep-2')">📋 Copy Prompt</button></div></div>
       <div class="scale-box" id="scale-rep-2"><div class="scale-header" onclick="togScale('rep-2')"><span>🚀</span><span class="scale-label">1M Scale Notes</span><span class="scale-sublabel">Async heavy job pattern</span><span class="scale-chevron">▼</span></div><div class="scale-content"><div class="scale-grid"><div class="scale-card"><div class="scale-card-title">WHY BULL QUEUE?</div><div class="scale-item">Puppeteer PDF generation takes <b>3-10 seconds</b>. Synchronous response would timeout mobile clients.</div><div class="scale-item">Bull Queue with Redis backend = job persists even if app server crashes mid-generation</div><div class="scale-item">Scale worker pods independently from API pods — PDF workers are CPU-heavy</div></div><div class="scale-card"><div class="scale-card-title">PUPPETEER AT SCALE</div><div class="scale-item">Run Puppeteer in <b>separate Docker container</b> (dedicated worker), not in main API process</div><div class="scale-item"><b>Browser pool</b>: Keep 2-3 Puppeteer instances warm (browser launch is slow ~2s)</div><div class="scale-item">S3 cache: same report requested within 1hr → return cached URL, skip regeneration</div></div></div></div></div>
-    </div>
+    
+      <div class="flow-box" id="flow-rep-2">
+        <div class="flow-header" onclick="togFlow('rep-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Download PDF Button Tap</div>
+            <div class="flow-desc"><b>POST /reports/:siteId/pdf/generate</b>. PDF generation request bhejo.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">Express — Enqueue Job</div>
+            <div class="flow-desc">PDF generation synchronous nahi hai — <b>Bull Queue</b> mein job daalo. <code>pdfQueue.add({ siteId, userId })</code>. Return jobId immediately.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-queue">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Bull Queue — PDF Worker</div>
+            <div class="flow-desc">Background worker: <b>Puppeteer</b> HTML → PDF convert karta hai. Report HTML generate → Chromium pe render → PDF bytes.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-ext">☁️</div>
+          <div class="flow-body">
+            <div class="flow-title">AWS S3 — Upload</div>
+            <div class="flow-desc">PDF bytes → <span class="tag-db">s3.upload({ Bucket, Key: "reports/{siteId}/{timestamp}.pdf", Body: pdfBytes })</span>. Permanent storage.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Job Status + URL Cache</div>
+            <div class="flow-desc"><span class="tag-redis">SET pdf_status:{jobId} "completed" EX 3600</span> + <span class="tag-redis">SET pdf_url:{siteId} presignedUrl EX 3600</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">App — Poll → Share Sheet</div>
+            <div class="flow-desc">App polls <b>GET /reports/:siteId/pdf/status/:jobId</b> every 2s → status "completed" → presigned S3 URL milta hai → <b>expo-sharing</b> se share sheet open.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div>
   </div>
 
   <div class="api-row" id="api-rep-3"><div class="api-top" onclick="tog('rep-3')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/html</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Raw HTML report — expo-print uses this directly for mobile printing.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response</div><div class="codeblock">Content-Type: text/html
@@ -1950,11 +3364,119 @@ generateSiteReportHTML(data) function should be in src/lib/reportTemplate.ts:
 - Print-friendly: white background, dark text, clear tables
 - A4 page size: @page { size: A4; margin: 15mm; }
 
-IMPORTANT: All images must be base64 inline (logo, etc.) — no external URL references for print compatibility.</div><button class="copy-btn" onclick="copyPrompt('rep-3')">📋 Copy Prompt</button></div></div></div></div>
+IMPORTANT: All images must be base64 inline (logo, etc.) — no external URL references for print compatibility.</div><button class="copy-btn" onclick="copyPrompt('rep-3')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-rep-3">
+        <div class="flow-header" onclick="togFlow('rep-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">HTML Report Request</div>
+            <div class="flow-desc"><b>GET /reports/:siteId/html</b>. PDF ke liye HTML template server side generate hota hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Full Data Fetch</div>
+            <div class="flow-desc">All site data ek saath fetch — same as rep-1 but raw data for HTML generation.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-server">🖥️</div>
+          <div class="flow-body">
+            <div class="flow-title">HTML Template Generation</div>
+            <div class="flow-desc"><code>generateSiteReportHTML(siteData)</code> function → styled HTML string with all sections → Puppeteer-ready.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → HTML String</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ html: "&lt;!DOCTYPE html&gt;..." }</code>. PDF worker isko use karta hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
-  <div class="api-row" id="api-rep-4"><div class="api-top" onclick="tog('rep-4')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/share</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">PDF link WhatsApp ya email se share karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">via</td><td class="ptype">whatsapp|email</td><td class="preq r">required</td></tr><tr><td class="pname">to</td><td class="ptype">string</td><td class="preq r">required</td></tr></table></div></div></div></div>
+  <div class="api-row" id="api-rep-4"><div class="api-top" onclick="tog('rep-4')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/share</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">PDF link WhatsApp ya email se share karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">via</td><td class="ptype">whatsapp|email</td><td class="preq r">required</td></tr><tr><td class="pname">to</td><td class="ptype">string</td><td class="preq r">required</td></tr></table></div></div>
+      <div class="flow-box" id="flow-rep-4">
+        <div class="flow-header" onclick="togFlow('rep-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Share Button → Report Link</div>
+            <div class="flow-desc"><b>POST /reports/:siteId/share</b>. Shareable link generate karo — owner ko bhejo.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Shareable Token</div>
+            <div class="flow-desc"><span class="tag-redis">SET share:{token} {siteId} EX 86400</span>. Token 24 hours valid. Public URL: <code>/public/report/{token}</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Share Link</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ shareUrl: "https://sitekhata.com/report/abc123" }</code>. WhatsApp pe bhejo owner ko.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
-  <div class="api-row" id="api-rep-5"><div class="api-top" onclick="tog('rep-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/expense-chart</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Expense split chart data — pie/bar chart ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"chartData"</span>: [{ <span class="ck2">"name"</span>: <span class="cs">"Steel"</span>, <span class="ck2">"amount"</span>: <span class="cn">85000</span>, <span class="ck2">"percent"</span>: <span class="cn">13.7</span> }] }</div></div></div></div></div>
+  <div class="api-row" id="api-rep-5"><div class="api-top" onclick="tog('rep-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reports/site/</span><span class="seg-param">:siteId</span><span class="seg-base">/expense-chart</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Expense split chart data — pie/bar chart ke liye.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Response 200</div><div class="codeblock">{ <span class="ck2">"chartData"</span>: [{ <span class="ck2">"name"</span>: <span class="cs">"Steel"</span>, <span class="ck2">"amount"</span>: <span class="cn">85000</span>, <span class="ck2">"percent"</span>: <span class="cn">13.7</span> }] }</div></div></div>
+      <div class="flow-box" id="flow-rep-5">
+        <div class="flow-header" onclick="togFlow('rep-5')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Reports Screen — Expense Chart</div>
+            <div class="flow-desc"><b>GET /reports/:siteId/expense-chart</b>. Pie chart data ke liye.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Cached Stats</div>
+            <div class="flow-desc"><span class="tag-redis">GET stats:{siteId}</span> → HIT → chart data extract. MISS → DB query.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Category Aggregation</div>
+            <div class="flow-desc"><span class="tag-db">SELECT subCategory, SUM(amount) FROM transactions WHERE siteId AND type="debit" GROUP BY subCategory ORDER BY SUM(amount) DESC</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Pie Chart</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ materialPercent: 65, labourPercent: 35, breakdown: [{ Steel: 85000 }, ...] }</code></div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 <!-- ═══════════════════ REMINDERS ═══════════════════ -->
@@ -1982,7 +3504,39 @@ Cron job (src/jobs/reminderCron.ts) runs daily at 8AM:
   SELECT r.*, u.expo_push_token FROM reminders r
   JOIN auth_users u ON u.id = r.user_id
   WHERE r.date::date = CURRENT_DATE AND u.expo_push_token IS NOT NULL
-  → For each: send Expo push notification via https://exp.host/--/api/v2/push/send</div><button class="copy-btn" onclick="copyPrompt('rem-1')">📋 Copy Prompt</button></div></div></div></div>
+  → For each: send Expo push notification via https://exp.host/--/api/v2/push/send</div><button class="copy-btn" onclick="copyPrompt('rem-1')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-rem-1">
+        <div class="flow-header" onclick="togFlow('rem-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Reminders Screen Open</div>
+            <div class="flow-desc"><b>GET /reminders</b>. User ke saare reminders — all sites.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — User Reminders</div>
+            <div class="flow-desc"><span class="tag-db">SELECT r.*, s.name as siteName FROM reminders r LEFT JOIN sites s ON r.siteId=s.id WHERE r.userId ORDER BY date ASC</span>. Index: <code>idx_reminders_userid</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Reminder Cards</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> <code>{ reminders: [{ title, date, siteName }] }</code>. Date-wise sorted cards.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-rem-2"><div class="api-top" onclick="tog('rem-2')"><span class="method m-POST">POST</span><span class="api-path-text"><span class="seg-base">/reminders</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Naya reminder add karo.</div><div class="detail-grid"><div class="dbox"><div class="dlabel">Request Body</div><table class="param-table"><tr><th>Field</th><th>Type</th><th>Req</th></tr><tr><td class="pname">title</td><td class="ptype">string</td><td class="preq r">required</td></tr><tr><td class="pname">date</td><td class="ptype">datetime</td><td class="preq r">required</td></tr><tr><td class="pname">siteId</td><td class="ptype">string</td><td class="preq o">optional</td></tr></table></div><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s201">201 Created</span><span class="sc s400">400</span></div></div></div><div class="prompt-box" id="prompt-rem-2"><div class="prompt-header" onclick="togPrompt('rem-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-rem-2">Build POST /api/v1/reminders — create reminder.
 
@@ -1996,11 +3550,145 @@ PUSH NOTIFICATION SCHEDULING:
 After insert, add to Bull delayed queue:
   const delay = new Date(date).getTime() - Date.now();
   await notificationQueue.add('send-push', { reminderId: reminder.id, userId, title }, { delay });
-This sends push at exact time rather than only daily batch cron.</div><button class="copy-btn" onclick="copyPrompt('rem-2')">📋 Copy Prompt</button></div></div></div></div>
+This sends push at exact time rather than only daily batch cron.</div><button class="copy-btn" onclick="copyPrompt('rem-2')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-rem-2">
+        <div class="flow-header" onclick="togFlow('rem-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Add Reminder Form</div>
+            <div class="flow-desc"><b>POST /reminders</b> with <code>{ title: "Pay cement supplier", date: "2026-03-20T10:00:00", siteId }</code></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL Primary — INSERT</div>
+            <div class="flow-desc"><span class="tag-db">INSERT INTO reminders (userId, siteId, title, date) VALUES (...) RETURNING *</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-queue">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Bull Queue — Delayed Push Notification</div>
+            <div class="flow-desc"><code>delay = new Date(date).getTime() - Date.now()</code> → <span class="tag-redis">notificationQueue.add("send-push", {title}, { delay })</span>. Exact time pe notification fire hogi.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">201 Created</span>. Reminder list mein appear. Notification scheduled.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
-  <div class="api-row" id="api-rem-3"><div class="api-top" onclick="tog('rem-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/reminders/</span><span class="seg-param">:reminderId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Reminder update karo — title ya date change.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
-  <div class="api-row" id="api-rem-4"><div class="api-top" onclick="tog('rem-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/reminders/</span><span class="seg-param">:reminderId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Reminder delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div></div></div>
-  <div class="api-row" id="api-rem-5"><div class="api-top" onclick="tog('rem-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reminders/upcoming</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Next 7 days ke reminders — push notification cron job bhi yahi use karta hai.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span></div></div></div></div></div>
+  <div class="api-row" id="api-rem-3"><div class="api-top" onclick="tog('rem-3')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/reminders/</span><span class="seg-param">:reminderId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Reminder update karo — title ya date change.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-rem-3">
+        <div class="flow-header" onclick="togFlow('rem-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Edit Reminder</div>
+            <div class="flow-desc"><b>PUT /reminders/:reminderId</b> title ya date change.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Update</div>
+            <div class="flow-desc">Ownership verify → <span class="tag-db">UPDATE reminders SET title=:title, date=:date WHERE id=reminderId AND userId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span>. (Note: Bull Queue job reschedule karo if date changed)</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
+  <div class="api-row" id="api-rem-4"><div class="api-top" onclick="tog('rem-4')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/reminders/</span><span class="seg-param">:reminderId</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Reminder delete karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s404">404</span></div></div></div>
+      <div class="flow-box" id="flow-rem-4">
+        <div class="flow-header" onclick="togFlow('rem-4')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Delete Reminder</div>
+            <div class="flow-desc"><b>DELETE /reminders/:reminderId</b></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Delete</div>
+            <div class="flow-desc">Ownership verify → <span class="tag-db">DELETE FROM reminders WHERE id=reminderId AND userId</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span></div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
+  <div class="api-row" id="api-rem-5"><div class="api-top" onclick="tog('rem-5')"><span class="method m-GET">GET</span><span class="api-path-text"><span class="seg-base">/reminders/upcoming</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Next 7 days ke reminders — push notification cron job bhi yahi use karta hai.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span></div></div></div>
+      <div class="flow-box" id="flow-rem-5">
+        <div class="flow-header" onclick="togFlow('rem-5')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Cron Job + Dashboard Bar</div>
+            <div class="flow-desc"><b>GET /reminders/upcoming</b>. Push notification cron + dashboard reminders-today bhi yahi use karta hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Next 7 Days</div>
+            <div class="flow-desc"><span class="tag-db">SELECT * FROM reminders WHERE userId AND date BETWEEN NOW() AND NOW()+7days ORDER BY date ASC</span></div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> upcoming reminders list.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 <!-- ═══════════════════ USER ═══════════════════ -->
@@ -2020,7 +3708,39 @@ This sends push at exact time rather than only daily batch cron.</div><button cl
 
 Add expo_push_token column to auth_users table:
   Drizzle: expoPushToken: text('expo_push_token')
-  This is set via PUT /users/me when app registers for notifications.</div><button class="copy-btn" onclick="copyPrompt('usr-1')">📋 Copy Prompt</button></div></div></div></div>
+  This is set via PUT /users/me when app registers for notifications.</div><button class="copy-btn" onclick="copyPrompt('usr-1')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-usr-1">
+        <div class="flow-header" onclick="togFlow('usr-1')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Profile Screen / App Init</div>
+            <div class="flow-desc"><b>GET /users/me</b>. App launch pe user info fetch + expoPushToken check.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — User Row</div>
+            <div class="flow-desc"><span class="tag-db">SELECT id, phone, role, loggedInAt, expoPushToken FROM auth_users WHERE id=req.user.userId</span>. PK lookup — O(1).</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> user profile. App notification permission bhi yahan check karta hai.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-usr-2"><div class="api-top" onclick="tog('usr-2')"><span class="method m-PUT">PUT</span><span class="api-path-text"><span class="seg-base">/users/me</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Profile update karo — expoPushToken update ke liye bhi use hota hai.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s400">400</span></div></div></div><div class="prompt-box" id="prompt-usr-2"><div class="prompt-header" onclick="togPrompt('usr-2')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-usr-2">Build PUT /api/v1/users/me — update user profile.
 
@@ -2031,7 +3751,39 @@ Add expo_push_token column to auth_users table:
 
 This endpoint is called by mobile app on every app launch after login:
   const token = await Notifications.getExpoPushTokenAsync();
-  await api.put('/users/me', { expoPushToken: token.data });</div><button class="copy-btn" onclick="copyPrompt('usr-2')">📋 Copy Prompt</button></div></div></div></div>
+  await api.put('/users/me', { expoPushToken: token.data });</div><button class="copy-btn" onclick="copyPrompt('usr-2')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-usr-2">
+        <div class="flow-header" onclick="togFlow('usr-2')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">App Launch → Push Token Register</div>
+            <div class="flow-desc"><b>PUT /users/me</b> with <code>{ expoPushToken: "ExponentPushToken[...]" }</code>. Expo notifications register hone ke baad call hoti hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Token Save</div>
+            <div class="flow-desc"><span class="tag-db">UPDATE auth_users SET expo_push_token=:token WHERE id=userId</span>. Yeh token reminder push notifications ke liye use hota hai.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span> updated user.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 
   <div class="api-row" id="api-usr-3"><div class="api-top" onclick="tog('usr-3')"><span class="method m-DELETE">DELETE</span><span class="api-path-text"><span class="seg-base">/users/me</span></span><div class="api-chips"><span class="chip chip-jwt">🔒 JWT</span><span class="chevron">▼</span></div></div><div class="api-detail"><div class="detail-desc">Account delete karo — saari sites aur linked data bhi. Soft delete (isDeleted flag) implement karo.</div><div class="detail-grid single"><div class="dbox"><div class="dlabel">Status Codes</div><div class="status-row"><span class="sc s200">200 OK</span><span class="sc s401">401</span></div></div></div><div class="prompt-box" id="prompt-usr-3"><div class="prompt-header" onclick="togPrompt('usr-3')"><span>🤖</span><span class="prompt-label">AI Implementation Prompt</span><span class="prompt-sublabel">Copy → paste in Cursor / Claude</span><span class="prompt-chevron">▼</span></div><div class="prompt-content"><div class="prompt-text" id="prompt-text-usr-3">Build DELETE /api/v1/users/me — account deletion with soft delete pattern.
 
@@ -2047,7 +3799,45 @@ HARD DELETE APPROACH (simpler):
   This is irreversible — add a 'confirm' field in request body: { confirm: "DELETE MY ACCOUNT" }
   
 Add middleware to all routes: if req.user exists but user.deleted_at is set → return 401 "Account deleted"
-GDPR note: Log deletion request with timestamp for compliance audit trail.</div><button class="copy-btn" onclick="copyPrompt('usr-3')">📋 Copy Prompt</button></div></div></div></div>
+GDPR note: Log deletion request with timestamp for compliance audit trail.</div><button class="copy-btn" onclick="copyPrompt('usr-3')">📋 Copy Prompt</button></div></div>
+      <div class="flow-box" id="flow-usr-3">
+        <div class="flow-header" onclick="togFlow('usr-3')">
+          <span>🔀</span>
+          <span class="flow-label">API Flow</span>
+          <span class="flow-sublabel">Request → Response ka poora safar</span>
+          <span class="flow-chevron">▼</span>
+        </div>
+        <div class="flow-content">
+          <div class="flow-track">
+            <div class="flow-step">
+          <div class="flow-dot dot-app">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Delete Account — Confirm Dialog</div>
+            <div class="flow-desc"><b>DELETE /users/me</b> with <code>{ confirm: "DELETE MY ACCOUNT" }</code>. Irreversible action.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-db">🐘</div>
+          <div class="flow-body">
+            <div class="flow-title">PostgreSQL — Soft Delete</div>
+            <div class="flow-desc"><span class="tag-db">UPDATE auth_users SET deleted_at=NOW(), refresh_token=NULL WHERE id=userId</span>. Hard delete after 30 days via background job.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-redis">🔴</div>
+          <div class="flow-body">
+            <div class="flow-title">Redis — Flush All User Caches</div>
+            <div class="flow-desc"><span class="tag-redis">DEL dash:{userId} sites_list:{userId}</span> + all site-specific keys.</div>
+          </div>
+        </div><div class="flow-step">
+          <div class="flow-dot dot-res">📱</div>
+          <div class="flow-body">
+            <div class="flow-title">Response → Welcome Screen</div>
+            <div class="flow-desc"><span class="tag-ok">200 OK</span>. AsyncStorage clear → Welcome screen. Account scheduled for deletion.</div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      </div></div>
 </div>
 
 </main>
@@ -2072,6 +3862,10 @@ function navTo(id, btn){
 function togPrompt(id){
   const box = document.getElementById('prompt-'+id);
   if(box) box.classList.toggle('prompt-open');
+}
+function togFlow(id){
+  const box = document.getElementById('flow-'+id);
+  if(box) box.classList.toggle('flow-open');
 }
 function togScale(id){
   const box = document.getElementById('scale-'+id);
